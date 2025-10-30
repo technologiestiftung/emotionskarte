@@ -272,4 +272,4 @@ cython_debug/
 .idea/
 .vscode/
 .env
-.data/
+data/
