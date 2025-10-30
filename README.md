@@ -1,19 +1,16 @@
 ![](https://img.shields.io/badge/Built%20with%20%E2%9D%A4%EF%B8%8F-at%20Technologiestiftung%20Berlin-blue)
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-
-[![All Contributors](https://img.shields.io/badge/all_contributors-0-orange.svg?style=flat-square)](#contributors-)
-
+[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-# {repo-template}
+# Emotionskarte Berlin
 
 ## TODO (after you generated the repo)
 
 - [ ] Review the content of the README.md and adjust to your liking
 - [ ] Read the README.md till the end and adjust the content licensing,
       logos, etc (I know you stopped at tbd...)
-- [ ] Adjust the file [.github/CODEOWNERS](./.github/CODEOWNERS)
 - [ ] Adjust the files under [.github/ISSUE_TEMPLATE](./.github/ISSUE_TEMPLATE)
 - [ ] If you need renovate, enable it for your repository in the renovate app in the settings of your organisation
 - [ ] If you use staging and main branches use this template for [.github/renovate.json](./.github/renovate.json)
@@ -74,8 +71,11 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
 <table>
-  <tr>
-  </tr>
+  <tbody>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/malte-b"><img src="https://avatars.githubusercontent.com/u/27922183?v=4?s=64" width="64px;" alt="Malte Barth"/><br /><sub><b>Malte Barth</b></sub></a><br /><a href="https://github.com/technologiestiftung/template-default/commits?author=malte-b" title="Code">💻</a> <a href="#data-malte-b" title="Data">🔣</a> <a href="#ideas-malte-b" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/technologiestiftung/template-default/commits?author=malte-b" title="Documentation">📖</a></td>
+    </tr>
+  </tbody>
 </table>
 
 <!-- markdownlint-restore -->
