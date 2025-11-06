@@ -272,4 +272,5 @@ cython_debug/
 .idea/
 .vscode/
 .env
-data/
+data_processing/data/
+setup.md
