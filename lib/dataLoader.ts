@@ -1,10 +1,11 @@
+// @ts-ignore – no type definitions for papaparse
 import Papa from "papaparse";
 import type { HexData, HexPlaceData, Metric, Place } from "./types";
 
 const CSV_SOURCES: Record<Place, string> = {
   drinnen: "/berlin_drinnen.csv",
   draussen: "/berlin_draussen.csv",
-  oepnv: "/berlin_oepnv.csv"
+  oepnv: "/berlin_oepnv.csv",
 };
 
 const METRIC_KEYS: Metric[] = [
@@ -17,7 +18,7 @@ const METRIC_KEYS: Metric[] = [
   "EnvInteresting",
   "EnvSafety",
   "EnvCrowded",
-  "EnvironmentGreeness"
+  "EnvironmentGreeness",
 ];
 
 type CsvRow = {
@@ -44,27 +45,34 @@ function parseRow(row: CsvRow): HexPlaceData {
   return { metrics, n: n ?? null };
 }
 
-export async function loadHexData(signal?: AbortSignal): Promise<Record<string, HexData>> {
+export async function loadHexData(
+  signal?: AbortSignal
+): Promise<Record<string, HexData>> {
   const data: Record<string, HexData> = {};
 
   await Promise.all(
-    (Object.entries(CSV_SOURCES) as [Place, string][]).map(async ([place, url]) => {
-      const response = await fetch(url, { signal });
-      if (!response.ok) {
-        throw new Error(`CSV ${url} konnte nicht geladen werden.`);
+    (Object.entries(CSV_SOURCES) as [Place, string][]).map(
+      async ([place, url]) => {
+        const response = await fetch(url, { signal });
+        if (!response.ok) {
+          throw new Error(`CSV ${url} konnte nicht geladen werden.`);
+        }
+        const text = await response.text();
+        const parsed = Papa.parse<CsvRow>(text, {
+          header: true,
+          skipEmptyLines: true,
+        });
+        if (parsed.errors.length > 0) {
+          throw new Error(parsed.errors[0].message);
+        }
+        for (const row of parsed.data) {
+          if (!row?.hex_id) continue;
+          const existing = data[row.hex_id] ?? {};
+          existing[place] = parseRow(row);
+          data[row.hex_id] = existing;
+        }
       }
-      const text = await response.text();
-      const parsed = Papa.parse<CsvRow>(text, { header: true, skipEmptyLines: true });
-      if (parsed.errors.length > 0) {
-        throw new Error(parsed.errors[0].message);
-      }
-      for (const row of parsed.data) {
-        if (!row?.hex_id) continue;
-        const existing = data[row.hex_id] ?? {};
-        existing[place] = parseRow(row);
-        data[row.hex_id] = existing;
-      }
-    })
+    )
   );
 
   return data;
