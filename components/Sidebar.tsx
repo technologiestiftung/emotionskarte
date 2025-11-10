@@ -73,21 +73,27 @@ export default function Sidebar(props: SidebarProps) {
         </p>
       </header>
 
-      <nav className="flex gap-2 border-b border-white/5 px-6 pb-4 pt-5 text-sm font-medium">
-        {TABS.map((item) => (
-          <button
-            key={item.key}
-            onClick={() => onTabChange(item.key)}
-            className={clsx(
-              "flex-1 rounded-2xl border px-3 py-2 transition",
-              tab === item.key
-                ? "border-primary-200 bg-primary-200 text-night-950 shadow-glow"
-                : "border-white/5 bg-slate-900/30 text-slate-300 hover:border-white/20"
-            )}
-          >
-            {item.label}
-          </button>
-        ))}
+      <nav className="border-b border-white/10 px-6 pt-5 text-sm font-medium">
+        <div className="flex gap-6">
+          {TABS.map((item) => (
+            <button
+              key={item.key}
+              onClick={() => onTabChange(item.key)}
+              className={clsx(
+                "relative pb-3 transition",
+                tab === item.key
+                  ? [
+                      "text-primary-200",
+                      // bottom border "tab" indicator
+                      "after:absolute after:inset-x-0 after:-bottom-px after:h-0.5 after:bg-primary-200",
+                    ]
+                  : "text-slate-400 hover:text-slate-100"
+              )}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
       </nav>
 
       <div className="flex-1 overflow-y-auto px-6 pb-10 pt-6">
