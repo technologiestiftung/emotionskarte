@@ -3,9 +3,9 @@
  * Generate Berlin H3 (res 9) PMTiles for MapLibre
  *
  * Requires:
- *   npm install h3-js
+ *   npm install --save-dev h3-js
  *   brew install tippecanoe
- *   npm install -g pmtiles
+ *   npm install --save-dev pmtiles
  */
 
 const fs = require("fs");
@@ -15,12 +15,13 @@ const path = require("path");
 const h3 = require("h3-js");
 
 // ---------- CONFIG ----------
-const BOUNDARY_PATH = "./data/berlin.geojson";
-const OUT_PMTILES = "./data/berlin-h3-res9.pmtiles";
+const BOUNDARY_PATH = "../data/berlin.geojson";
+const OUT_PMTILES = "../data/berlin-h3-res9.pmtiles";
 const RESOLUTION = 9;
 const MINZOOM = 0;
 const MAXZOOM = 19;
-const LAYER_NAME = "h3";
+const LAYER_HEXES = "h3";
+const LAYER_CENTROIDS = "h3_centroids";
 // ----------------------------
 
 function loadGeoJSON(filePath) {
@@ -76,17 +77,56 @@ function cellBoundaryLngLat(cell) {
   }
 }
 
-// Helper: write stream and wait for close
-function writeNdjson(hexes, filePath) {
+function cellCentroidLngLat(cell) {
+  if (typeof h3.cellToLatLng === "function") {
+    // v4 returns [lat, lng]
+    const [lat, lng] = h3.cellToLatLng(cell);
+    return [lng, lat];
+  } else if (typeof h3.h3ToGeo === "function") {
+    // v3 returns [lat, lng]
+    const [lat, lng] = h3.h3ToGeo(cell);
+    return [lng, lat];
+  } else if (typeof h3.cellToCoordinate === "function") {
+    // some builds use cellToCoordinate -> {lat, lng}
+    const { lat, lng } = h3.cellToCoordinate(cell);
+    return [lng, lat];
+  }
+  throw new Error("No cell centroid function found");
+}
+
+// Helper: write polygon features (one per hex) as NDJSON
+function writeHexPolygonsNdjson(hexes, filePath) {
   return new Promise((resolve, reject) => {
     const stream = fs.createWriteStream(filePath);
     for (const h of hexes) {
       const boundary = cellBoundaryLngLat(h);
+      console.log("ÄÄÄÄ", h);
+
       const feature = {
         type: "Feature",
-        id: h,
-        properties: {},
+        //i d: h,
+        properties: { h3: h },
         geometry: { type: "Polygon", coordinates: [boundary] },
+      };
+      stream.write(JSON.stringify(feature) + "\n");
+    }
+    stream.end();
+    stream.on("finish", resolve);
+    stream.on("error", reject);
+  });
+}
+
+// Helper: write centroid point features (no props, just id) as NDJSON
+function writeHexCentroidsNdjson(hexes, filePath) {
+  return new Promise((resolve, reject) => {
+    const stream = fs.createWriteStream(filePath);
+    for (const h of hexes) {
+      const [lng, lat] = cellCentroidLngLat(h);
+      const feature = {
+        type: "Feature",
+        //id: h,
+        properties: { h3: h },
+        geometry: { type: "Point", coordinates: [lng, lat] },
       };
       stream.write(JSON.stringify(feature) + "\n");
     }
@@ -110,15 +150,32 @@ async function main() {
   console.log("Total hexes:", hexes.size);
 
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "h3_"));
-  const ndjsonPath = path.join(tmpDir, "h3.ndjson");
+  const ndjsonPolys = path.join(tmpDir, "h3_polygons.ndjson");
+  const ndjsonCentroids = path.join(tmpDir, "h3_centroids.ndjson");
   const mbtilesPath = path.join(tmpDir, "h3.mbtiles");
 
-  console.log(`Writing NDJSON to ${ndjsonPath} …`);
-  await writeNdjson(hexes, ndjsonPath);
+  console.log(`Writing polygon NDJSON to ${ndjsonPolys} …`);
+  await writeHexPolygonsNdjson(hexes, ndjsonPolys);
 
-  console.log("→ tippecanoe …");
+  console.log(`Writing centroid NDJSON to ${ndjsonCentroids} …`);
+  await writeHexCentroidsNdjson(hexes, ndjsonCentroids);
+
+  console.log("→ tippecanoe (polygons + centroids) …");
+  // Use -L to provide multiple input layers in one go.
   execSync(
-    `tippecanoe -o ${mbtilesPath} -l ${LAYER_NAME} -Z ${MINZOOM} -z ${MAXZOOM} --force --detect-shared-borders ${ndjsonPath}`,
+    [
+      "tippecanoe",
+      `-o ${mbtilesPath}`,
+      `-Z ${MINZOOM}`,
+      `-z ${MAXZOOM}`,
+      "--force",
+      "--detect-shared-borders",
+      "--no-feature-limit",
+      "--no-tile-size-limit",
+      "-r1", // 👈 keep all points at all zooms
+      `-L ${LAYER_HEXES}:${ndjsonPolys}`,
+      `-L ${LAYER_CENTROIDS}:${ndjsonCentroids}`,
+    ].join(" "),
     { stdio: "inherit" }
   );
 

@@ -1,0 +1,6 @@
+{
+  "devDependencies": {
+    "h3-js": "^4.3.0",
+    "pmtiles": "^4.3.0"
+  }
+}
