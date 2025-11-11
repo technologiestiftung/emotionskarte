@@ -1,12 +1,21 @@
 import { COLOR_RAMP } from "../lib/constants";
 
-export default function Legend() {
+import type { Metric } from "../lib/types";
+import { METRIC_LABELS } from "../lib/constants";
+export type LegendProps = {
+  metric: Metric;
+};
+
+export default function Legend(props: LegendProps) {
+  const { metric } = props;
+
   return (
     <div className="pointer-events-auto w-[260px] rounded-3xl border border-primary-500/60 bg-night-900/90 p-4 text-xs text-slate-100 shadow-glow backdrop-blur">
       {/* Header */}
       <div className="flex items-center">
         <h3 className="flex-1 text-center text-sm font-semibold">
-          Intensitätsskala von <span className="text-teal-300">Vitalität</span>
+          Intensitätsskala von{" "}
+          <span className="text-teal-300">{METRIC_LABELS[metric]}</span>
         </h3>
         <span className="ml-2 text-lg leading-none text-slate-200">⌃</span>
       </div>

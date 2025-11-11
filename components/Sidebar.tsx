@@ -106,8 +106,8 @@ export default function Sidebar(props: SidebarProps) {
               </h2>
               <p className="mt-2 text-sm text-slate-300">
                 Verteilung der Emotion{" "}
-                <span className="italic">{METRIC_LABELS[metric]}</span> nach Ort
-                und Intensität.
+                <span className="italic">{METRIC_LABELS[metric]}</span> in
+                Berlin.
               </p>
             </header>
 
@@ -154,7 +154,7 @@ export default function Sidebar(props: SidebarProps) {
                 </h3>
               </header>
 
-              <div className="overflow-x-auto scrollbar-hide">
+              <div className="overflow-x-auto ">
                 <div className="inline-flex min-w-max overflow-hidden rounded-3xl border border-white/40 bg-black/40 text-sm">
                   {metricOptions.map((option, index) => {
                     const active = metric === option;
@@ -231,7 +231,7 @@ export default function Sidebar(props: SidebarProps) {
               </label> */}
             </section>
 
-            <section className="grid gap-4 rounded-3xl border border-white/5 bg-slate-900/30 p-5">
+            {/* <section className="grid gap-4 rounded-3xl border border-white/5 bg-slate-900/30 p-5">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-semibold uppercase tracking-[0.3em] text-slate-300">
                   Emotionenverteilung
@@ -253,7 +253,7 @@ export default function Sidebar(props: SidebarProps) {
                 Darstellung exemplarisch: reale Werte hängen von der Auswahl auf
                 der Karte ab.
               </p>
-            </section>
+            </section> */}
           </div>
         )}
 

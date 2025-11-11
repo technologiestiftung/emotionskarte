@@ -101,12 +101,17 @@ export default function MapView({
   const mapRef = useRef<MapLibreMap | null>(null);
   const popupRef = useRef<maplibregl.Popup | null>(null);
   const hoverTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const dataRef = useRef(mapData);
+  const metricRef = useRef<Metric>(metric);
+
   const [mapLoaded, setMapLoaded] = useState(false);
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
   const [tileError, setTileError] = useState<string | null>(null);
 
+  // keep refs in sync with props
   dataRef.current = mapData;
+  metricRef.current = metric;
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) {
@@ -232,6 +237,14 @@ export default function MapView({
     return () => window.clearTimeout(timeout);
   }, [mapData, mapLoaded]);
 
+  // close popup when metric changes (optional but fine)
+  useEffect(() => {
+    if (popupRef.current) {
+      popupRef.current.remove();
+      popupRef.current = null;
+    }
+  }, [metric]);
+
   const activePlacesLabel = useMemo(() => {
     if (!activePlaces.length) {
       return "Ort";
@@ -308,6 +321,8 @@ export default function MapView({
       new maplibregl.Popup({ closeOnClick: true, closeButton: true });
     popupRef.current = popup;
 
+    const currentMetric = metricRef.current; // 🔥 always the latest metric
+
     const tableRows = (Object.keys(info.places) as Place[])
       .map((place) => {
         const entry = info.places[place];
@@ -323,7 +338,7 @@ export default function MapView({
         `
         <div class="min-w-[220px] text-sm bg-base-black p-3">
           <h3 class="text-base font-semibold">Hex ${hexId}</h3>
-          <p class="mt-1">${metric} · Teilnehmer:innen: ${info.n}</p>
+          <p class="mt-1">${currentMetric} · Teilnehmer:innen: ${info.n}</p>
           <p class="mt-1">Durchschnitt: ${
             info.value != null ? info.value.toFixed(2) : "n/a"
           }</p>
