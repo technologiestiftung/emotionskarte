@@ -70,3 +70,11 @@ input[type="range"]::-moz-range-thumb {
 .maplibregl-popup-content {
   padding: 0px !important;
 }
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

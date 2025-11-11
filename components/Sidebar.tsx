@@ -2,7 +2,12 @@
 
 import clsx from "clsx";
 import { useEffect, useState } from "react";
-import { METRIC_GROUPS, METRIC_LABELS, PLACE_LABELS } from "../lib/constants";
+import {
+  METRIC_GROUPS,
+  METRIC_LABELS,
+  METRIC_LABELS_VERBS,
+  PLACE_LABELS,
+} from "../lib/constants";
 import type { Filters } from "../lib/aggregation";
 import type { Metric, MetricGroupKey, Place } from "../lib/types";
 
@@ -11,6 +16,12 @@ const TABS: { key: MetricGroupKey; label: string }[] = [
   { key: "umwelt", label: "Umweltwahrnehmung" },
   { key: "daten", label: "Daten" },
 ];
+
+const PLACE_ICONS = {
+  inside: "🏠",
+  outside: "🌱",
+  transit: "🚌",
+};
 
 const PLACE_OPTIONS: Place[] = ["drinnen", "draussen", "oepnv"];
 
@@ -59,22 +70,8 @@ export default function Sidebar(props: SidebarProps) {
 
   const sidebarContent = (
     <div className="flex h-full w-[23rem] flex-col overflow-hidden rounded-r-3xl bg-panel-gradient text-slate-100 shadow-sidebar ring-1 ring-white/10 backdrop-blur-xl">
-      <header className="border-b border-white/5 px-6 pb-6 pt-7">
-        <p className="text-[11px] uppercase tracking-[0.45em] text-primary-100">
-          Emotionale Stadt
-        </p>
-        <h2 className="mt-3 font-display text-2xl font-semibold leading-tight">
-          Wo ist Berlin vital?
-        </h2>
-        <p className="mt-2 text-sm text-slate-300">
-          Verteilung der Emotion{" "}
-          <span className="text-primary-50">{METRIC_LABELS[metric]}</span> nach
-          Ort und Intensität.
-        </p>
-      </header>
-
       <nav className="border-b border-white/10 px-6 pt-5 text-sm font-medium">
-        <div className="flex gap-6">
+        <div className="flex gap-6 text-center">
           {TABS.map((item) => (
             <button
               key={item.key}
@@ -99,57 +96,86 @@ export default function Sidebar(props: SidebarProps) {
       <div className="flex-1 overflow-y-auto px-6 pb-10 pt-6">
         {tab !== "daten" && (
           <div className="flex flex-col gap-7">
-            <section className="space-y-4 rounded-3xl border border-white/5 bg-slate-900/30 p-5">
-              <header className="flex items-center justify-between">
-                <h3 className="text-sm font-semibold uppercase tracking-[0.3em] text-slate-300">
-                  Orte
-                </h3>
-              </header>
-              <div className="flex flex-wrap gap-2">
-                {PLACE_OPTIONS.map((place) => {
-                  const active = places.includes(place);
-                  return (
-                    <button
-                      key={place}
-                      className={clsx(
-                        "rounded-full px-4 py-2 text-sm font-medium transition",
-                        active
-                          ? "bg-primary-300 text-night-950 shadow-glow"
-                          : "bg-slate-800/60 text-slate-300 hover:bg-slate-800"
-                      )}
-                      onClick={() => selectPlace(place)}
-                    >
-                      {PLACE_LABELS[place]}
-                    </button>
-                  );
-                })}
-              </div>
-              <p className="text-xs text-slate-400">
-                Hexagone spiegeln den gewählten Ort wider. Es kann immer nur ein
-                Ort aktiv sein.
+            <header className="border-b border-white/5 pb-6">
+              <h2 className="mt-3 font-display text-2xl font-semibold leading-tight">
+                Wo ist Berlin{" "}
+                <span className="text-teal-400">
+                  {METRIC_LABELS_VERBS[metric]}
+                </span>{" "}
+                ?
+              </h2>
+              <p className="mt-2 text-sm text-slate-300">
+                Verteilung der Emotion{" "}
+                <span className="italic">{METRIC_LABELS[metric]}</span> nach Ort
+                und Intensität.
               </p>
-            </section>
+            </header>
 
-            <section className="space-y-4">
-              <div className="space-y-3">
-                <h3 className="text-sm font-semibold uppercase tracking-[0.3em] text-slate-300">
+            <section className="space-y-2">
+              {/* ORTE */}
+              <header>
+                <h3 className="text-sm font-semibold text-slate-100">Orte</h3>
+              </header>
+
+              <div className="flex justify-center">
+                <div className="inline-flex overflow-hidden rounded-full border border-white/40 bg-black/40 text-sm">
+                  {PLACE_OPTIONS.map((place, index) => {
+                    const active = places.includes(place);
+
+                    return (
+                      <button
+                        key={place}
+                        onClick={() => selectPlace(place)}
+                        className={clsx(
+                          "flex items-center justify-center gap-2 px-5 py-2 font-medium transition",
+                          index !== 0 && "border-l border-white/25",
+                          active
+                            ? "bg-white text-black"
+                            : "bg-transparent text-slate-100 hover:bg-white/10"
+                        )}
+                      >
+                        {/* optional icons like in the mock */}
+                        {PLACE_ICONS?.[place] && (
+                          <span className="text-base leading-none" aria-hidden>
+                            {PLACE_ICONS[place]}
+                          </span>
+                        )}
+                        <span>{PLACE_LABELS[place]}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </section>
+            <section className="mt-6 space-y-2">
+              <header>
+                <h3 className="text-sm font-semibold text-slate-100">
                   Emotionen
                 </h3>
-                <p className="text-xs text-slate-400">
-                  Wähle eine Kennzahl aus, um die Karte entsprechend zu färben.
-                  Die Intensität reicht von 1 bis 5.
-                </p>
-              </div>
-              <div className="grid gap-3">
-                {metricOptions.map((option) => (
-                  <MetricCard
-                    key={option}
-                    label={METRIC_LABELS[option]}
-                    description="Hexagonaler Durchschnitt 1–5"
-                    active={metric === option}
-                    onSelect={() => onMetricChange(option)}
-                  />
-                ))}
+              </header>
+
+              <div className="overflow-x-auto scrollbar-hide">
+                <div className="inline-flex min-w-max overflow-hidden rounded-3xl border border-white/40 bg-black/40 text-sm">
+                  {metricOptions.map((option, index) => {
+                    const active = metric === option;
+
+                    return (
+                      <button
+                        key={option}
+                        onClick={() => onMetricChange(option)}
+                        className={clsx(
+                          "flex-shrink-0 px-4 py-2 text-center font-medium transition text-xs",
+                          index !== 0 && "border-l border-white/25",
+                          active
+                            ? "bg-teal-400 text-black"
+                            : "bg-transparent text-slate-100 hover:bg-white/10"
+                        )}
+                      >
+                        {METRIC_LABELS[option]}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             </section>
 
@@ -373,28 +399,6 @@ type MetricCardProps = {
   active: boolean;
   onSelect: () => void;
 };
-
-function MetricCard({ label, description, active, onSelect }: MetricCardProps) {
-  return (
-    <button
-      onClick={onSelect}
-      className={clsx(
-        "group flex items-center justify-between gap-4 rounded-3xl border px-4 py-3 text-left transition",
-        active
-          ? "border-primary-200 bg-metric-card text-night-950 shadow-glow"
-          : "border-white/5 bg-slate-900/30 text-slate-200 hover:border-primary-100/60"
-      )}
-    >
-      <div>
-        <p className="text-sm font-semibold">{label}</p>
-        <p className="text-xs text-slate-400">{description}</p>
-      </div>
-      <div className="hidden h-12 w-24 items-end justify-between gap-1 sm:flex">
-        <Sparkline active={active} />
-      </div>
-    </button>
-  );
-}
 
 function Sparkline({ active }: { active?: boolean }) {
   const bars = [3, 5, 2, 4, 1.5, 3.5, 4.5];

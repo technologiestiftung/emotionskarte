@@ -28,11 +28,24 @@ export const METRIC_LABELS: Record<Metric, string> = {
   Loneliness: "Einsamkeit",
   Anxiety: "Angst",
   Energy: "Energie",
-  EnvBeauty: "Umwelt: Schönheit",
-  EnvInteresting: "Umwelt: Interessant",
-  EnvSafety: "Umwelt: Sicherheit",
-  EnvCrowded: "Umwelt: Andrang",
-  EnvironmentGreeness: "Umwelt: Grünflächen",
+  EnvBeauty: "Schönheit",
+  EnvInteresting: "Interessant",
+  EnvSafety: "Sicherheit",
+  EnvCrowded: "Andrang",
+  EnvironmentGreeness: "Grünflächen",
+};
+
+export const METRIC_LABELS_VERBS: Record<Metric, string> = {
+  Stress: "gestresst",
+  Happy: "glücklich",
+  Loneliness: "einsam",
+  Anxiety: "ängstlich",
+  Energy: "energetisch",
+  EnvBeauty: "schön",
+  EnvInteresting: "interessant",
+  EnvSafety: "sicher",
+  EnvCrowded: "überfüllt",
+  EnvironmentGreeness: "grün",
 };
 
 export const DEFAULT_METRIC: Metric = "Happy";
