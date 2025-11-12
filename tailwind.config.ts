@@ -24,8 +24,9 @@ const config: Config = {
           900: "#050b12",
           950: "#02070d",
         },
-        base: {
+        emo: {
           black: "#09090B",
+          blacktext: "#2F2E38",
         },
       },
       boxShadow: {

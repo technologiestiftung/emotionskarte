@@ -11,9 +11,21 @@ import {
   ensurePlaces,
   type Filters,
 } from "../lib/aggregation";
-import { DEFAULT_METRIC, DEFAULT_PLACE, PLACE_LABELS } from "../lib/constants";
+import {
+  DEFAULT_METRIC,
+  DEFAULT_PLACE,
+  METRIC_GROUPS,
+  METRIC_LABELS,
+} from "../lib/constants";
+
 import { loadHexData } from "../lib/dataLoader";
-import type { HexData, Metric, MetricGroupKey, Place } from "../lib/types";
+import type {
+  HexData,
+  Metric,
+  MetricGroupKey,
+  Place,
+  RadarData,
+} from "../lib/types";
 
 const DEFAULT_FILTERS: Filters = {
   minValue: 1,
@@ -30,13 +42,14 @@ export default function HomePage() {
   const [rawData, setRawData] = useState<Record<string, HexData>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [hexId, setHexId] = useState<string | null>(null);
+  const [hexData, setHexData] = useState<RadarData>({});
 
   useEffect(() => {
     const controller = new AbortController();
 
     loadHexData(controller.signal)
       .then((result) => {
-        console.log("resultresult", result);
         setRawData(result);
         setError(null);
       })
@@ -45,7 +58,6 @@ export default function HomePage() {
         if (err instanceof DOMException && err.name === "AbortError") {
           return;
         }
-
         console.error(err);
         setError("Daten konnten nicht geladen werden.");
       })
@@ -67,8 +79,35 @@ export default function HomePage() {
     [rawData, metric, safePlaces, filters]
   );
 
+  useEffect(() => {
+    const place = places[0];
+    const selectedHexData = hexId ? rawData[hexId] : undefined;
+    const selectedHexDataPlace = selectedHexData?.[place]?.metrics;
+
+    if (!hexId || !selectedHexDataPlace) {
+      setHexData({});
+      return;
+    }
+
+    const buildRadar = (group: readonly Metric[]): RadarData => {
+      const out: RadarData = {};
+      for (const m of group) {
+        const label = METRIC_LABELS[m];
+        // numbers or fallback to 0
+        out[label] = selectedHexDataPlace[m] ?? 0;
+      }
+      return out;
+    };
+
+    if (tab === "emotionen") {
+      setHexData(buildRadar(METRIC_GROUPS.emotionen));
+    } else if (tab === "umwelt") {
+      setHexData(buildRadar(METRIC_GROUPS.umwelt));
+    }
+  }, [hexId, places, rawData, tab]);
+
   return (
-    <main className="relative flex h-screen flex-col bg-night-950 text-slate-100">
+    <main className="relative flex h-screen flex-col bg-emo-black text-slate-100">
       <IntroModal />
       <div className="relative flex h-full w-full">
         <Sidebar
@@ -80,6 +119,7 @@ export default function HomePage() {
           onPlacesChange={setPlaces}
           filters={filters}
           onFiltersChange={setFilters}
+          hexData={hexData}
         />
 
         <div className="relative flex-1">
@@ -89,11 +129,12 @@ export default function HomePage() {
             activePlaces={safePlaces}
             loading={loading}
             error={error}
+            setHexId={setHexId}
           />
           <div className="pointer-events-none absolute inset-0 z-20 flex flex-col justify-between">
             {/* @todo */}
             {/* <div className="flex justify-end px-6 pt-6">
-              <div className="pointer-events-auto hidden max-w-sm flex-col gap-2 rounded-2xl border border-white/10 bg-night-900/85 p-4 text-sm backdrop-blur md:flex">
+              <div className="pointer-events-auto hidden max-w-sm flex-col gap-2 rounded-2xl border border-white/10 bg-emo-blacktext/85 p-4 text-sm backdrop-blur md:flex">
                 <label
                   className="text-[11px] uppercase tracking-[0.35em] text-slate-400"
                   htmlFor="map-search"
@@ -116,7 +157,7 @@ export default function HomePage() {
             </div> */}
             {/* @todo */}
             {/* <div className="pointer-events-none px-6 pb-8">
-              <div className="pointer-events-auto inline-flex max-w-md flex-col gap-3 rounded-3xl border border-white/5 bg-night-900/80 p-4 text-xs shadow-glow backdrop-blur">
+              <div className="pointer-events-auto inline-flex max-w-md flex-col gap-3 rounded-3xl border border-white/5 bg-emo-blacktext/80 p-4 text-xs shadow-glow backdrop-blur">
                 <p className="text-[11px] uppercase tracking-[0.4em] text-primary-100">
                   Aktives Hexagon
                 </p>

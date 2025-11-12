@@ -9,7 +9,8 @@ import {
   PLACE_LABELS,
 } from "../lib/constants";
 import type { Filters } from "../lib/aggregation";
-import type { Metric, MetricGroupKey, Place } from "../lib/types";
+import type { Metric, MetricGroupKey, Place, RadarData } from "../lib/types";
+import { EmotionRadar } from "./EmotionRadar";
 
 const TABS: { key: MetricGroupKey; label: string }[] = [
   { key: "emotionen", label: "Emotionen" },
@@ -18,9 +19,9 @@ const TABS: { key: MetricGroupKey; label: string }[] = [
 ];
 
 const PLACE_ICONS = {
-  inside: "🏠",
-  outside: "🌱",
-  transit: "🚌",
+  drinnen: "🏠",
+  draussen: "🌱",
+  oepnv: "🚌",
 };
 
 const PLACE_OPTIONS: Place[] = ["drinnen", "draussen", "oepnv"];
@@ -34,6 +35,7 @@ export type SidebarProps = {
   onPlacesChange: (places: Place[]) => void;
   filters: Filters;
   onFiltersChange: (filters: Filters) => void;
+  hexData: RadarData;
 };
 
 export default function Sidebar(props: SidebarProps) {
@@ -46,6 +48,7 @@ export default function Sidebar(props: SidebarProps) {
     onPlacesChange,
     filters,
     onFiltersChange,
+    hexData,
   } = props;
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -69,7 +72,8 @@ export default function Sidebar(props: SidebarProps) {
   const metricOptions = tab === "daten" ? [] : METRIC_GROUPS[tab];
 
   const sidebarContent = (
-    <div className="flex h-full w-[23rem] flex-col overflow-hidden rounded-r-3xl bg-panel-gradient text-slate-100 shadow-sidebar ring-1 ring-white/10 backdrop-blur-xl">
+    //w-[23rem]
+    <div className="flex h-full w-[473px] flex-col overflow-hidden bg-panel-gradient text-slate-100 shadow-sidebar ring-1 ring-white/10 backdrop-blur-xl">
       <nav className="border-b border-white/10 px-6 pt-5 text-sm font-medium">
         <div className="flex gap-6 text-center">
           {TABS.map((item) => (
@@ -81,7 +85,6 @@ export default function Sidebar(props: SidebarProps) {
                 tab === item.key
                   ? [
                       "text-primary-200",
-                      // bottom border "tab" indicator
                       "after:absolute after:inset-x-0 after:-bottom-px after:h-0.5 after:bg-primary-200",
                     ]
                   : "text-slate-400 hover:text-slate-100"
@@ -114,7 +117,9 @@ export default function Sidebar(props: SidebarProps) {
             <section className="space-y-2">
               {/* ORTE */}
               <header>
-                <h3 className="text-sm font-semibold text-slate-100">Orte</h3>
+                <h3 className="text-xl font-semibold text-slate-100 pb-2">
+                  Orte
+                </h3>
               </header>
 
               <div className="flex justify-center">
@@ -147,9 +152,9 @@ export default function Sidebar(props: SidebarProps) {
                 </div>
               </div>
             </section>
-            <section className="mt-6 space-y-2">
+            <section className="space-y-2">
               <header>
-                <h3 className="text-sm font-semibold text-slate-100">
+                <h3 className="text-xl font-semibold text-slate-100 pb-2">
                   Emotionen
                 </h3>
               </header>
@@ -164,7 +169,7 @@ export default function Sidebar(props: SidebarProps) {
                         key={option}
                         onClick={() => onMetricChange(option)}
                         className={clsx(
-                          "flex-shrink-0 px-4 py-2 text-center font-medium transition text-xs",
+                          "flex items-center justify-center gap-2 px-5 py-2 font-medium transition",
                           index !== 0 && "border-l border-white/25",
                           active
                             ? "bg-teal-400 text-black"
@@ -218,42 +223,22 @@ export default function Sidebar(props: SidebarProps) {
                 value={filters.minParticipants}
                 onChange={(value) => updateFilter({ minParticipants: value })}
               />
-
-              {/* @todo */}
-              {/* <label className="flex items-center gap-3 rounded-2xl border border-white/5 bg-slate-950/60 px-4 py-3 text-sm">
-                <input
-                  type="checkbox"
-                  checked={filters.hideNoData}
-                  onChange={(event) => updateFilter({ hideNoData: event.target.checked })}
-                  className="h-4 w-4 rounded border-slate-500 text-primary-300 focus:ring-primary-200"
-                />
-                <span className="text-slate-200">Hexagone ohne Daten ausblenden</span>
-              </label> */}
             </section>
 
-            {/* <section className="grid gap-4 rounded-3xl border border-white/5 bg-slate-900/30 p-5">
-              <div className="flex items-center justify-between">
-                <h3 className="text-sm font-semibold uppercase tracking-[0.3em] text-slate-300">
-                  Emotionenverteilung
-                </h3>
-                <span className="text-xs text-slate-400">Beispielhexagon</span>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="flex-1 space-y-2">
-                  <Sparkline />
-                  <div className="flex justify-between text-[11px] uppercase tracking-widest text-slate-500">
-                    <span>1</span>
-                    <span>3</span>
-                    <span>5</span>
-                  </div>
+            {Object.keys(hexData).length !== 0 && (
+              <section className="grid gap-4 p-5">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-semibold text-slate-300">
+                    Emotionenverteilung im Hexagon
+                  </h3>
                 </div>
-                <RadarPlaceholder />
-              </div>
-              <p className="text-xs text-slate-400">
-                Darstellung exemplarisch: reale Werte hängen von der Auswahl auf
-                der Karte ab.
-              </p>
-            </section> */}
+
+                <div className="flex items-center gap-4">
+                  {/* Animated radar chart here */}
+                  <EmotionRadar data={hexData} />
+                </div>
+              </section>
+            )}
           </div>
         )}
 
@@ -265,7 +250,7 @@ export default function Sidebar(props: SidebarProps) {
   return (
     <>
       <button
-        className="fixed left-4 top-4 z-30 flex h-12 w-12 items-center justify-center rounded-full border border-primary-200/50 bg-night-900/80 text-primary-100 shadow-glow transition hover:border-primary-200 md:hidden"
+        className="fixed left-4 top-4 z-30 flex h-12 w-12 items-center justify-center rounded-full border border-primary-200/50 bg-emo-black text-primary-100 shadow-glow transition hover:border-primary-200 md:hidden"
         onClick={() => setMobileOpen((value) => !value)}
         aria-label="Sidebar umschalten"
       >
@@ -389,45 +374,6 @@ function DataTabContent() {
         </p>
         <p>Lizenz: CC BY 4.0 · Kontakt: emotionskarte@berlin.de</p>
       </section>
-    </div>
-  );
-}
-
-type MetricCardProps = {
-  label: string;
-  description: string;
-  active: boolean;
-  onSelect: () => void;
-};
-
-function Sparkline({ active }: { active?: boolean }) {
-  const bars = [3, 5, 2, 4, 1.5, 3.5, 4.5];
-  return (
-    <div className="flex h-full w-full items-end gap-1">
-      {bars.map((value, index) => (
-        <div
-          key={index}
-          className={clsx(
-            "w-[6px] rounded-full bg-gradient-to-t from-primary-300/30 to-primary-200/80",
-            active ? "shadow-glow" : "opacity-70"
-          )}
-          style={{ height: `${value * 8}px` }}
-        />
-      ))}
-    </div>
-  );
-}
-
-function RadarPlaceholder() {
-  return (
-    <div className="relative flex h-28 w-28 items-center justify-center">
-      <div className="absolute inset-0 rounded-full border border-white/10" />
-      <div className="absolute h-20 w-20 rounded-full border border-primary-200/30" />
-      <div className="absolute h-14 w-14 rounded-full border border-primary-200/20" />
-      <div className="absolute h-8 w-8 rounded-full bg-primary-200/40" />
-      <span className="text-[11px] uppercase tracking-widest text-primary-100">
-        Demo
-      </span>
     </div>
   );
 }

@@ -1,5 +1,11 @@
 import { DEFAULT_PLACE, METRIC_GROUPS, PLACE_LABELS } from "./constants";
-import type { HexAggregated, HexData, Metric, MetricGroupKey, Place } from "./types";
+import type {
+  HexAggregated,
+  HexData,
+  Metric,
+  MetricGroupKey,
+  Place,
+} from "./types";
 
 export type Filters = {
   minValue: number;
@@ -17,7 +23,10 @@ export function ensurePlaces(selected: Place[]): Place[] {
   return [unique[0]];
 }
 
-export function ensureMetricForTab(metric: Metric, tab: MetricGroupKey): Metric {
+export function ensureMetricForTab(
+  metric: Metric,
+  tab: MetricGroupKey
+): Metric {
   if (tab === "daten") {
     return metric;
   }
@@ -40,11 +49,16 @@ export function aggregateHexes(
   for (const [hexId, hexData] of Object.entries(data)) {
     const values: number[] = [];
     let nSum = 0;
-    const placeDetails: Record<Place, { value: number | null; n: number | null }> = {
+    const placeDetails: Record<
+      Place,
+      { value: number | null; n: number | null }
+    > = {
       drinnen: { value: null, n: null },
       draussen: { value: null, n: null },
-      oepnv: { value: null, n: null }
+      oepnv: { value: null, n: null },
     };
+
+    // console.log("hexData", hexData);
 
     for (const place of ["drinnen", "draussen", "oepnv"] as Place[]) {
       const placeData = hexData[place];
@@ -64,7 +78,9 @@ export function aggregateHexes(
     const hasData = values.length > 0;
     const value = hasData ? average(values) : null;
     const passesFilter = hasData
-      ? value! >= filters.minValue && value! <= filters.maxValue && nSum >= filters.minParticipants
+      ? value! >= filters.minValue &&
+        value! <= filters.maxValue &&
+        nSum >= filters.minParticipants
       : false;
 
     const visible = hasData ? passesFilter : !filters.hideNoData;
@@ -76,7 +92,7 @@ export function aggregateHexes(
       hasData,
       passesFilter,
       visible,
-      places: placeDetails
+      places: placeDetails,
     };
   }
 

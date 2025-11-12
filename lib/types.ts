@@ -12,6 +12,8 @@ export type Metric =
 
 export type Place = "drinnen" | "draussen" | "oepnv";
 
+export type RadarData = Record<string, number>;
+
 export type HexPlaceData = {
   metrics: Record<Metric, number | null>;
   n: number | null;

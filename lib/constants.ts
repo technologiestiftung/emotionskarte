@@ -24,10 +24,10 @@ export const DEFAULT_PLACE: Place = "draussen";
 
 export const METRIC_LABELS: Record<Metric, string> = {
   Stress: "Stress",
-  Happy: "Glücklichsein",
+  Happy: "Freude",
   Loneliness: "Einsamkeit",
   Anxiety: "Angst",
-  Energy: "Energie",
+  Energy: "Vitalität",
   EnvBeauty: "Schönheit",
   EnvInteresting: "Interessant",
   EnvSafety: "Sicherheit",
@@ -40,7 +40,7 @@ export const METRIC_LABELS_VERBS: Record<Metric, string> = {
   Happy: "glücklich",
   Loneliness: "einsam",
   Anxiety: "ängstlich",
-  Energy: "energetisch",
+  Energy: "vital",
   EnvBeauty: "schön",
   EnvInteresting: "interessant",
   EnvSafety: "sicher",

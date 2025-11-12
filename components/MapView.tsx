@@ -17,6 +17,7 @@ import {
   PMTILES_ARCHIVE_PATH,
 } from "../lib/constants";
 import type { HexAggregated, Metric, Place } from "../lib/types";
+import { METRIC_LABELS } from "../lib/constants";
 
 let featureStateWarningShown = false;
 let protocol: Protocol | null = null;
@@ -81,6 +82,7 @@ type MapViewProps = {
   activePlaces: Place[];
   loading: boolean;
   error?: string | null;
+  setHexId: (hexId: string | null) => void;
 };
 
 type TooltipState = {
@@ -96,6 +98,7 @@ export default function MapView({
   activePlaces,
   loading,
   error,
+  setHexId,
 }: MapViewProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
@@ -205,6 +208,7 @@ export default function MapView({
         });
         if (!features.length) {
           popupRef.current?.remove();
+          setHexId(null);
         }
       });
       setTileError(null);
@@ -255,7 +259,7 @@ export default function MapView({
   const setupInteractions = (map: MapLibreMap) => {
     const layers: Array<"h3-fill" | "h3-centroids"> = [
       "h3-fill",
-      "h3-centroids",
+      // "h3-centroids",
     ];
     layers.forEach((layerId) => {
       map.on("mousemove", layerId, (event) => handleHover(event));
@@ -312,6 +316,7 @@ export default function MapView({
       return;
     }
     const hexId = String(feature.id);
+    setHexId(hexId);
     const info = dataRef.current[hexId];
     if (!info) {
       return;
@@ -336,12 +341,15 @@ export default function MapView({
       .setLngLat(event.lngLat)
       .setHTML(
         `
-        <div class="min-w-[220px] text-sm bg-base-black p-3">
+        <div class="min-w-[220px] text-sm bg-emo-black p-3">
           <h3 class="text-base font-semibold">Hex ${hexId}</h3>
-          <p class="mt-1">${currentMetric} · Teilnehmer:innen: ${info.n}</p>
+          <p class="mt-1">Durchschnittswert für ${
+            METRIC_LABELS[currentMetric]
+          }</p>
           <p class="mt-1">Durchschnitt: ${
             info.value != null ? info.value.toFixed(2) : "n/a"
           }</p>
+          <p class="mt-1">Teilnehmer:innen: ${info.n}</p>
           <table class="mt-3 w-full border-collapse text-xs">
             <thead>
               <tr>
@@ -362,13 +370,13 @@ export default function MapView({
     <div className="relative h-full w-full">
       <div ref={containerRef} className="absolute inset-0 h-full" />
       {loading && (
-        <div className="absolute inset-0 z-10 flex items-center justify-center bg-night-950/70 text-sm uppercase tracking-[0.4em] text-slate-200">
+        <div className="absolute inset-0 z-10 flex items-center justify-center bg-emo-black text-sm uppercase tracking-[0.4em] text-slate-200">
           Daten werden geladen …
         </div>
       )}
       {(error || tileError) && (
         <div className="absolute inset-0 z-20 flex items-center justify-center">
-          <div className="rounded-3xl border border-red-500/40 bg-night-900/90 px-6 py-4 text-sm text-red-300 shadow-glow">
+          <div className="rounded-3xl border border-red-500/40 bg-emo-textblack/90 px-6 py-4 text-sm text-red-300 shadow-glow">
             {error ?? tileError}
           </div>
         </div>
@@ -376,7 +384,7 @@ export default function MapView({
       {tooltip && (
         <div
           className={clsx(
-            "pointer-events-none absolute z-20 w-60 rounded-3xl border border-white/10 bg-night-900/85 p-4 text-xs text-slate-100 shadow-glow backdrop-blur"
+            "pointer-events-none absolute z-20 w-60 rounded-3xl border border-white/10 bg-emo-black p-4 text-xs text-slate-100 shadow-glow backdrop-blur"
           )}
           style={{ left: tooltip.x + 12, top: tooltip.y + 12 }}
         >
@@ -392,7 +400,7 @@ export default function MapView({
             Teilnehmer:innen: {tooltip.info.hasData ? tooltip.info.n : "n/a"}
           </p>
           <p className="mt-3 text-[11px] uppercase tracking-[0.35em] text-slate-500">
-            Aktive Orte
+            Aktive Orte ööööö
           </p>
           <p className="text-xs text-slate-200">{activePlacesLabel}</p>
         </div>
