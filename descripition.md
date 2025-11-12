@@ -12,9 +12,9 @@
 ```
 /public
   /berlin-h3-res9.pmtiles/         # contains the .pmtiles file
-  berlin_drinnen.csv
-  berlin_draussen.csv
-  berlin_oepnv.csv
+  indoors_by_hex_id_res9.csv
+  outdoors_by_hex_id_res9.csv
+  transit_by_hex_id_res9.csv
   logos/*                          # for start modal
 ```
 
@@ -33,7 +33,7 @@
 
 ## CSV data (three files; identical header)
 
-- `berlin_drinnen.csv`, `berlin_draussen.csv`, `berlin_oepnv.csv`
+- `indoors_by_hex_id_res9.csv`, `outdoors_by_hex_id_res9.csv`, `transit_by_hex_id_res9.csv`
 
 ```
 hex_id,Stress,Happy,Loneliness,Anxiety,Energy,EnvBeauty,EnvInteresting,EnvSafety,EnvCrowded,EnvironmentGreeness,DataPointCount

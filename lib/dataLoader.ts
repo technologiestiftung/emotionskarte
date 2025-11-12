@@ -3,9 +3,9 @@ import Papa from "papaparse";
 import type { HexData, HexPlaceData, Metric, Place } from "./types";
 
 const CSV_SOURCES: Record<Place, string> = {
-  drinnen: "/berlin_drinnen.csv",
-  draussen: "/berlin_draussen.csv",
-  oepnv: "/berlin_oepnv.csv",
+  drinnen: "/indoors_by_hex_id_res9.csv",
+  draussen: "/outdoors_by_hex_id_res9.csv",
+  oepnv: "/transit_by_hex_id_res9.csv",
 };
 
 const METRIC_KEYS: Metric[] = [

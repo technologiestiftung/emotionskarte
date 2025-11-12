@@ -17,12 +17,7 @@ const TABS: { key: MetricGroupKey; label: string }[] = [
   { key: "umwelt", label: "Umweltwahrnehmung" },
   { key: "daten", label: "Daten" },
 ];
-
-const PLACE_ICONS = {
-  drinnen: "🏠",
-  draussen: "🌱",
-  oepnv: "🚌",
-};
+import Icon from "./Icon"; // adjust path if needed
 
 const PLACE_OPTIONS: Place[] = ["drinnen", "draussen", "oepnv"];
 
@@ -139,12 +134,13 @@ export default function Sidebar(props: SidebarProps) {
                             : "bg-transparent text-slate-100 hover:bg-white/10"
                         )}
                       >
-                        {/* optional icons like in the mock */}
-                        {PLACE_ICONS?.[place] && (
-                          <span className="text-base leading-none" aria-hidden>
-                            {PLACE_ICONS[place]}
-                          </span>
-                        )}
+                        <Icon
+                          name={place}
+                          className={clsx(
+                            "w-5 h-5",
+                            active ? "text-black" : "text-white"
+                          )}
+                        />
                         <span>{PLACE_LABELS[place]}</span>
                       </button>
                     );
@@ -351,18 +347,30 @@ function DataTabContent() {
         <h4 className="text-base font-semibold text-primary-100">Downloads</h4>
         <ul className="space-y-2 text-primary-100 underline-offset-2">
           <li>
-            <a href="/berlin_drinnen.csv" download className="hover:underline">
-              berlin_drinnen.csv
+            <a
+              href="/indoors_by_hex_id_res9.csv"
+              download
+              className="hover:underline"
+            >
+              indoors_by_hex_id_res9.csv
             </a>
           </li>
           <li>
-            <a href="/berlin_draussen.csv" download className="hover:underline">
-              berlin_draussen.csv
+            <a
+              href="/outdoors_by_hex_id_res9.csv"
+              download
+              className="hover:underline"
+            >
+              outdoors_by_hex_id_res9.csv
             </a>
           </li>
           <li>
-            <a href="/berlin_oepnv.csv" download className="hover:underline">
-              berlin_oepnv.csv
+            <a
+              href="/transit_by_hex_id_res9.csv"
+              download
+              className="hover:underline"
+            >
+              transit_by_hex_id_res9.csv
             </a>
           </li>
         </ul>
