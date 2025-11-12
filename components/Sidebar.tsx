@@ -155,7 +155,7 @@ export default function Sidebar(props: SidebarProps) {
                 </h3>
               </header>
 
-              <div className="overflow-x-auto ">
+              <div className="flex justify-center overflow-x-auto ">
                 <div className="inline-flex min-w-max overflow-hidden rounded-3xl border border-white/40 bg-black/40 text-sm">
                   {metricOptions.map((option, index) => {
                     const active = metric === option;
@@ -165,7 +165,7 @@ export default function Sidebar(props: SidebarProps) {
                         key={option}
                         onClick={() => onMetricChange(option)}
                         className={clsx(
-                          "flex items-center justify-center gap-2 px-5 py-2 font-medium transition",
+                          "flex items-center justify-center gap-2 px-3 py-2 font-medium transition",
                           index !== 0 && "border-l border-white/25",
                           active
                             ? "bg-teal-400 text-black"
@@ -180,7 +180,7 @@ export default function Sidebar(props: SidebarProps) {
               </div>
             </section>
 
-            <section className="space-y-5 rounded-3xl border border-white/5 bg-slate-900/30 p-5">
+            {/* <section className="space-y-5 rounded-3xl border border-white/5 bg-slate-900/30 p-5">
               <div className="space-y-2">
                 <h3 className="text-sm font-semibold uppercase tracking-[0.3em] text-slate-300">
                   Filter
@@ -219,22 +219,30 @@ export default function Sidebar(props: SidebarProps) {
                 value={filters.minParticipants}
                 onChange={(value) => updateFilter({ minParticipants: value })}
               />
-            </section>
+            </section> */}
 
             {Object.keys(hexData).length !== 0 && (
-              <section className="grid gap-4 p-5">
+              <section className="grid gap-4">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-semibold text-slate-300">
+                  <h3 className="text-xl font-semibold text-slate-100 pb-2">
                     Emotionenverteilung im Hexagon
                   </h3>
                 </div>
 
-                <div className="flex items-center gap-4">
+                <div className="flex justify-center  ">
                   {/* Animated radar chart here */}
                   <EmotionRadar data={hexData} />
                 </div>
               </section>
             )}
+
+            <section className="border-t border-white/5 pt-6">
+              <p className="text-xs text-emo-greytext">
+                Der Datensatz umfasst den Zeitraum von Januar 2020 bis Dezember
+                2025. Die Karten-Visualisierung basiert auf den App-Daten mit
+                Stand vom 15. Oktober 2025. Mehr erfahren
+              </p>
+            </section>
           </div>
         )}
 

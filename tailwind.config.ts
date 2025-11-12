@@ -27,6 +27,7 @@ const config: Config = {
         emo: {
           black: "#09090B",
           blacktext: "#2F2E38",
+          greytext: "#928FA3",
         },
       },
       boxShadow: {
