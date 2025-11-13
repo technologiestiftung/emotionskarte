@@ -184,9 +184,7 @@ export default function HomePage() {
               </div>
             </div> */}
           </div>
-          <div className="pointer-events-none absolute bottom-6 right-6 z-30">
-            <Legend metric={metric} />
-          </div>
+          <Legend metric={metric} />
         </div>
       </div>
 
