@@ -128,7 +128,8 @@ No data → #B0B0B0 @ 0.3 opacity
      | "EnvSafety"
      | "EnvCrowded"
      | "EnvironmentGreeness";
-   type Place = "drinnen" | "draussen" | "oepnv";
+
+   type Place = "total" | "drinnen" | "draussen" | "oepnv";
 
    data[hexId][place] = {
      metrics: Record<Metric, number | null>,

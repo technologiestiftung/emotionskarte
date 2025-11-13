@@ -11,6 +11,7 @@ import {
 import type { Filters } from "../lib/aggregation";
 import type { Metric, MetricGroupKey, Place, RadarData } from "../lib/types";
 import { EmotionRadar } from "./EmotionRadar";
+import { EmotionBars } from "./EmotionBars";
 
 const TABS: { key: MetricGroupKey; label: string }[] = [
   { key: "emotionen", label: "Emotionen" },
@@ -19,7 +20,7 @@ const TABS: { key: MetricGroupKey; label: string }[] = [
 ];
 import Icon from "./Icon"; // adjust path if needed
 
-const PLACE_OPTIONS: Place[] = ["drinnen", "draussen", "oepnv"];
+const PLACE_OPTIONS: Place[] = ["total", "drinnen", "draussen", "oepnv"];
 
 export type SidebarProps = {
   tab: MetricGroupKey;
@@ -32,6 +33,20 @@ export type SidebarProps = {
   onFiltersChange: (filters: Filters) => void;
   hexData: RadarData;
 };
+
+function mockDistribution(tab: MetricGroupKey): number[] {
+  switch (tab) {
+    case "emotionen":
+      // values for emotion tab (1–5)
+      return [60, 45, 12, 55, 90];
+    case "umwelt":
+      // values for environment tab
+      return [30, 50, 25, 70, 40];
+    default:
+      // fallback (e.g. daten)
+      return [0, 0, 0, 0, 0];
+  }
+}
 
 export default function Sidebar(props: SidebarProps) {
   const {
@@ -46,6 +61,12 @@ export default function Sidebar(props: SidebarProps) {
     hexData,
   } = props;
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const [distribution, setDistribution] = useState(() => mockDistribution(tab));
+
+  useEffect(() => {
+    setDistribution(mockDistribution(tab));
+  }, [tab]);
 
   useEffect(() => {
     if (tab === "daten") {
@@ -179,6 +200,17 @@ export default function Sidebar(props: SidebarProps) {
                 </div>
               </div>
             </section>
+
+            <EmotionBars
+              tab={tab}
+              range={[filters.minValue, filters.maxValue]}
+              onRangeChange={([minValue, maxValue]) =>
+                updateFilter({
+                  minValue: Math.min(minValue, maxValue),
+                  maxValue: Math.max(maxValue, minValue),
+                })
+              }
+            />
 
             {/* <section className="space-y-5 rounded-3xl border border-white/5 bg-slate-900/30 p-5">
               <div className="space-y-2">

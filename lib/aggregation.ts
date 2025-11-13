@@ -53,6 +53,7 @@ export function aggregateHexes(
       Place,
       { value: number | null; n: number | null }
     > = {
+      total: { value: null, n: null },
       drinnen: { value: null, n: null },
       draussen: { value: null, n: null },
       oepnv: { value: null, n: null },
@@ -60,7 +61,7 @@ export function aggregateHexes(
 
     // console.log("hexData", hexData);
 
-    for (const place of ["drinnen", "draussen", "oepnv"] as Place[]) {
+    for (const place of ["total", "drinnen", "draussen", "oepnv"] as Place[]) {
       const placeData = hexData[place];
       if (!placeData) continue;
       const v = placeData.metrics[metric];

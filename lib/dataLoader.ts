@@ -3,6 +3,7 @@ import Papa from "papaparse";
 import type { HexData, HexPlaceData, Metric, Place } from "./types";
 
 const CSV_SOURCES: Record<Place, string> = {
+  total: "/total_by_hex_id_res9.csv",
   drinnen: "/indoors_by_hex_id_res9.csv",
   draussen: "/outdoors_by_hex_id_res9.csv",
   oepnv: "/transit_by_hex_id_res9.csv",

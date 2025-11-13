@@ -15,12 +15,13 @@ export const METRIC_GROUPS: Record<
 };
 
 export const PLACE_LABELS: Record<Place, string> = {
+  total: "Total",
   drinnen: "Drinnen",
   draussen: "Draußen",
   oepnv: "ÖPNV",
 };
 
-export const DEFAULT_PLACE: Place = "draussen";
+export const DEFAULT_PLACE: Place = "total";
 
 export const METRIC_LABELS: Record<Metric, string> = {
   Stress: "Stress",

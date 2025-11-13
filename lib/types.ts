@@ -10,7 +10,7 @@ export type Metric =
   | "EnvCrowded"
   | "EnvironmentGreeness";
 
-export type Place = "drinnen" | "draussen" | "oepnv";
+export type Place = "total" | "drinnen" | "draussen" | "oepnv";
 
 export type RadarData = Record<string, number>;
 
