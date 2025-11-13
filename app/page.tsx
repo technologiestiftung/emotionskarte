@@ -46,26 +46,25 @@ export default function HomePage() {
   const [hexData, setHexData] = useState<RadarData>({});
 
   useEffect(() => {
-    const controller = new AbortController();
-
-    loadHexData(controller.signal)
+    setLoading(true);
+    loadHexData()
       .then((result) => {
+        console.log(
+          "loadHexData resolved with",
+          Object.keys(result).length,
+          "hexes"
+        );
+
         setRawData(result);
         setError(null);
       })
       .catch((err: unknown) => {
-        // Ignore aborts
-        if (err instanceof DOMException && err.name === "AbortError") {
-          return;
-        }
         console.error(err);
         setError("Daten konnten nicht geladen werden.");
       })
       .finally(() => {
         setLoading(false);
       });
-
-    return () => controller.abort();
   }, []);
 
   useEffect(() => {

@@ -2,7 +2,11 @@
 
 import "maplibre-gl/dist/maplibre-gl.css";
 import clsx from "clsx";
-import maplibregl, { Map as MapLibreMap, MapMouseEvent } from "maplibre-gl";
+import maplibregl, {
+  Map as MapLibreMap,
+  MapMouseEvent,
+  MapSourceDataEvent,
+} from "maplibre-gl";
 import { PMTiles, Protocol } from "pmtiles";
 import { useEffect, useMemo, useRef, useState } from "react";
 import createBaseMapStyle from "../lib/mapStyle";
@@ -64,12 +68,6 @@ const CIRCLE_RADIUS_EXPRESSION: maplibregl.ExpressionSpecification = [
   0,
 ];
 
-// const FILL_OPACITY_EXPRESSION: maplibregl.ExpressionSpecification = [
-//   "coalesce",
-//   ["feature-state", "opacity"],
-//   0.1,
-// ];
-
 const CIRCLE_OPACITY_EXPRESSION: maplibregl.ExpressionSpecification = [
   "coalesce",
   ["feature-state", "circleOpacity"],
@@ -112,7 +110,7 @@ export default function MapView({
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
   const [tileError, setTileError] = useState<string | null>(null);
 
-  // keep refs in sync with props
+  // keep refs in sync with latest props
   dataRef.current = mapData;
   metricRef.current = metric;
 
@@ -137,6 +135,8 @@ export default function MapView({
       "top-left"
     );
     map.addControl(new maplibregl.AttributionControl({ compact: true }));
+
+    let sourceDataListener: ((e: MapSourceDataEvent) => void) | null = null;
 
     map.on("load", () => {
       try {
@@ -164,7 +164,7 @@ export default function MapView({
           source: H3_SOURCE_NAME,
           "source-layer": H3_CENTROID_LAYER,
           paint: {
-            "circle-color": "#ffffff", // COLOR_EXPRESSION,
+            "circle-color": "#ffffff",
             "circle-opacity": CIRCLE_OPACITY_EXPRESSION,
             "circle-radius": CIRCLE_RADIUS_EXPRESSION,
             "circle-stroke-width": 0,
@@ -200,8 +200,25 @@ export default function MapView({
         });
       }
 
+      // apply current data once immediately
       updateFeatureStates(map, dataRef.current);
+
+      // re-apply whenever tiles for our source finish loading
+      sourceDataListener = (event: MapSourceDataEvent) => {
+        if (
+          event.sourceId === H3_SOURCE_NAME &&
+          (event.isSourceLoaded ||
+            // some versions expose loaded() on the source
+            ((event.source as any)?.loaded?.() ?? false))
+        ) {
+          updateFeatureStates(map, dataRef.current);
+        }
+      };
+
+      map.on("sourcedata", sourceDataListener);
+
       setupInteractions(map);
+
       map.on("click", (event) => {
         const features = map.queryRenderedFeatures(event.point, {
           layers: ["h3-fill", "h3-centroids"],
@@ -211,6 +228,7 @@ export default function MapView({
           setHexId(null);
         }
       });
+
       setTileError(null);
       setMapLoaded(true);
     });
@@ -224,20 +242,24 @@ export default function MapView({
 
     return () => {
       popupRef.current?.remove();
+      if (sourceDataListener) {
+        map.off("sourcedata", sourceDataListener);
+      }
       map.remove();
       mapRef.current = null;
       setMapLoaded(false);
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // re-apply feature state when aggregated data changes
   useEffect(() => {
     const map = mapRef.current;
-    if (!map || !mapLoaded || !map.isStyleLoaded()) {
+    if (!map || !mapLoaded) {
       return;
     }
     const timeout = window.setTimeout(() => {
       updateFeatureStates(map, mapData);
-    }, 150);
+    }, 50);
     return () => window.clearTimeout(timeout);
   }, [mapData, mapLoaded]);
 
@@ -326,7 +348,7 @@ export default function MapView({
       new maplibregl.Popup({ closeOnClick: true, closeButton: true });
     popupRef.current = popup;
 
-    const currentMetric = metricRef.current; // 🔥 always the latest metric
+    const currentMetric = metricRef.current;
 
     const tableRows = (Object.keys(info.places) as Place[])
       .map((place) => {
@@ -400,7 +422,7 @@ export default function MapView({
             Teilnehmer:innen: {tooltip.info.hasData ? tooltip.info.n : "n/a"}
           </p>
           <p className="mt-3 text-[11px] uppercase tracking-[0.35em] text-slate-500">
-            Aktive Orte ööööö
+            Aktive Orte
           </p>
           <p className="text-xs text-slate-200">{activePlacesLabel}</p>
         </div>
@@ -413,6 +435,18 @@ function updateFeatureStates(
   map: MapLibreMap,
   entries: Record<string, HexAggregated>
 ) {
+  const src: any = map.getSource(H3_SOURCE_NAME);
+  const loaded =
+    src?.loaded?.() ??
+    src?.isSourceLoaded?.() ??
+    // fallback: if method doesn’t exist, assume loaded
+    true;
+
+  if (!loaded && !featureStateWarningShown) {
+    console.warn("updateFeatureStates called before source is fully loaded");
+    featureStateWarningShown = true;
+  }
+
   for (const [hexId, info] of Object.entries(entries)) {
     const state = {
       value: info.value,
@@ -435,6 +469,7 @@ function updateFeatureStates(
         ? 0.05
         : 0,
     };
+
     try {
       map.setFeatureState(
         { source: H3_SOURCE_NAME, sourceLayer: H3_HEX_LAYER, id: hexId },
