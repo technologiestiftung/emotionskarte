@@ -10,6 +10,7 @@ export type EmotionBarsProps = {
   range: [number, number];
   onRangeChange: (next: [number, number]) => void;
   className?: string;
+  metric: string;
 };
 
 export function EmotionBars({
@@ -17,6 +18,7 @@ export function EmotionBars({
   range,
   onRangeChange,
   className,
+  metric,
 }: EmotionBarsProps) {
   const [distribution, setDistribution] = useState<number[]>([]);
 
@@ -25,7 +27,7 @@ export function EmotionBars({
     if (tab === "emotionen") setDistribution([60, 45, 12, 55, 90]);
     else if (tab === "umwelt") setDistribution([30, 50, 25, 70, 40]);
     else setDistribution([0, 0, 0, 0, 0]);
-  }, [tab]);
+  }, [tab, metric]);
 
   const maxVal = Math.max(...distribution, 1);
 
@@ -102,7 +104,8 @@ export function EmotionBars({
                   rx={10}
                   ry={10}
                   //   fill="url(#grad)"
-                  fill={COLOR_RAMP[i].color}
+                  // @ts-ignore
+                  fill={COLOR_RAMP[metric][i].color}
                 >
                   <title>{`Wert ${bin}: ${v}`}</title>
                 </rect>

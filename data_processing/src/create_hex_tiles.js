@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Generate Berlin H3 (res 9) PMTiles for MapLibre
+ * Generate Berlin H3 (res 8) PMTiles for MapLibre
  *
  * Requires:
  *   npm install --save-dev h3-js
@@ -16,8 +16,8 @@ const h3 = require("h3-js");
 
 // ---------- CONFIG ----------
 const BOUNDARY_PATH = "../data/berlin.geojson";
-const OUT_PMTILES = "../data/berlin-h3-res9.pmtiles";
-const RESOLUTION = 9;
+const OUT_PMTILES = "../data/berlin-h3-res8.pmtiles";
+const RESOLUTION = 8;
 const MINZOOM = 0;
 const MAXZOOM = 19;
 const LAYER_HEXES = "h3";

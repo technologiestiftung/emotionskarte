@@ -55,7 +55,7 @@ export default function IntroModal() {
                 </li>
                 <li>
                   Die Farbskala reicht von 1 (niedrig) bis 5 (hoch); Kreise
-                  zeigen Teilnehmendenzahlen.
+                  zeigen die Anzahl der eingtragenen Datenpunkte.
                 </li>
               </ul>
             </div>

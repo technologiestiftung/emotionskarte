@@ -6,6 +6,12 @@ const config: Config = {
     "./components/**/*.{js,ts,jsx,tsx}",
     "./lib/**/*.{js,ts,jsx,tsx}",
   ],
+  safelist: [
+    {
+      pattern:
+        /(bg|text|border)-emo-(stress|happy|loneliness|anxiety|energy|envbeauty|envinteresting|envsafety|envcrowded|environmentgreeness)/,
+    },
+  ],
   theme: {
     extend: {
       fontFamily: {
@@ -28,6 +34,18 @@ const config: Config = {
           black: "#09090B",
           blacktext: "#2F2E38",
           greytext: "#928FA3",
+
+          stress: "#04BEAC",
+          happy: "#F8D130",
+          loneliness: "#0F29DB",
+          anxiety: "#65509E",
+          energy: "#04BEAC",
+
+          envbeauty: "#EC4899",
+          envinteresting: "#8B5CF6",
+          envsafety: "#0EA5E9",
+          envcrowded: "#F97316",
+          environmentgreeness: "#22C55E",
         },
       },
       boxShadow: {

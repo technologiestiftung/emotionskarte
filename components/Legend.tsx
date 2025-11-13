@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { COLOR_RAMP, METRIC_LABELS } from "../lib/constants";
+import { metricClass } from "../lib/utils";
+
 import type { Metric } from "../lib/types";
 
 export type LegendProps = {
@@ -31,7 +33,9 @@ export default function Legend({ metric }: LegendProps) {
         >
           <h3 className="flex-1 text-center text-sm font-semibold">
             Intensitätsskala von{" "}
-            <span className="text-teal-300">{METRIC_LABELS[metric]}</span>
+            <span className={metricClass(metric, "text")}>
+              {METRIC_LABELS[metric]}
+            </span>
           </h3>
 
           <span
@@ -49,7 +53,7 @@ export default function Legend({ metric }: LegendProps) {
             {/* Intensity scale */}
             <div className="mt-4">
               <div className="flex overflow-hidden rounded-full bg-slate-900/70">
-                {COLOR_RAMP.map((item) => (
+                {COLOR_RAMP[metric].map((item) => (
                   <div
                     key={item.value}
                     className="flex-1 py-2"
@@ -58,7 +62,7 @@ export default function Legend({ metric }: LegendProps) {
                 ))}
               </div>
               <div className="mt-2 flex justify-between text-[10px] text-slate-100">
-                {COLOR_RAMP.map((item) => (
+                {COLOR_RAMP[metric].map((item) => (
                   <span key={item.value}>{item.value}</span>
                 ))}
               </div>
@@ -66,9 +70,7 @@ export default function Legend({ metric }: LegendProps) {
 
             {/* Circle scale */}
             <div className="mt-4">
-              <p className="text-[13px] text-slate-50">
-                Teilnehmer:innen-Anzahl
-              </p>
+              <p className="text-[13px] text-slate-50">Anzahl an Einträgen</p>
               <div className="flex items-end justify-between">
                 {[1, 2, 3, 4, 5].map((step) => {
                   const size = 6 + step * 8;

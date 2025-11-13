@@ -8,6 +8,7 @@ import {
   METRIC_LABELS_VERBS,
   PLACE_LABELS,
 } from "../lib/constants";
+import { metricClass } from "../lib/utils";
 import type { Filters } from "../lib/aggregation";
 import type { Metric, MetricGroupKey, Place, RadarData } from "../lib/types";
 import { EmotionRadar } from "./EmotionRadar";
@@ -100,10 +101,10 @@ export default function Sidebar(props: SidebarProps) {
                 "relative pb-3 transition",
                 tab === item.key
                   ? [
-                      "text-primary-200",
-                      "after:absolute after:inset-x-0 after:-bottom-px after:h-0.5 after:bg-primary-200",
+                      "text-white",
+                      "after:absolute after:inset-x-0 after:-bottom-px after:h-0.5",
                     ]
-                  : "text-slate-400 hover:text-slate-100"
+                  : "text-emo-greytext hover:text-slate-100"
               )}
             >
               {item.label}
@@ -118,7 +119,7 @@ export default function Sidebar(props: SidebarProps) {
             <header className="border-b border-white/5 pb-6">
               <h2 className="mt-3 font-display text-2xl font-semibold leading-tight">
                 Wo ist Berlin{" "}
-                <span className="text-teal-400">
+                <span className={metricClass(metric, "text")}>
                   {METRIC_LABELS_VERBS[metric]}
                 </span>{" "}
                 ?
@@ -189,7 +190,7 @@ export default function Sidebar(props: SidebarProps) {
                           "flex items-center justify-center gap-2 px-3 py-2 font-medium transition",
                           index !== 0 && "border-l border-white/25",
                           active
-                            ? "bg-teal-400 text-black"
+                            ? metricClass(metric, "bg") + " text-black"
                             : "bg-transparent text-slate-100 hover:bg-white/10"
                         )}
                       >
@@ -210,6 +211,7 @@ export default function Sidebar(props: SidebarProps) {
                   maxValue: Math.max(maxValue, minValue),
                 })
               }
+              metric={metric}
             />
 
             {/* <section className="space-y-5 rounded-3xl border border-white/5 bg-slate-900/30 p-5">
@@ -263,7 +265,7 @@ export default function Sidebar(props: SidebarProps) {
 
                 <div className="flex justify-center  ">
                   {/* Animated radar chart here */}
-                  <EmotionRadar data={hexData} />
+                  <EmotionRadar data={hexData} metric={metric} />
                 </div>
               </section>
             )}
@@ -388,29 +390,29 @@ function DataTabContent() {
         <ul className="space-y-2 text-primary-100 underline-offset-2">
           <li>
             <a
-              href="/indoors_by_hex_id_res9.csv"
+              href="/indoors_by_hex_id_res8.csv"
               download
               className="hover:underline"
             >
-              indoors_by_hex_id_res9.csv
+              indoors_by_hex_id_res8.csv
             </a>
           </li>
           <li>
             <a
-              href="/outdoors_by_hex_id_res9.csv"
+              href="/outdoors_by_hex_id_res8.csv"
               download
               className="hover:underline"
             >
-              outdoors_by_hex_id_res9.csv
+              outdoors_by_hex_id_res8.csv
             </a>
           </li>
           <li>
             <a
-              href="/transit_by_hex_id_res9.csv"
+              href="/transit_by_hex_id_res8.csv"
               download
               className="hover:underline"
             >
-              transit_by_hex_id_res9.csv
+              transit_by_hex_id_res8.csv
             </a>
           </li>
         </ul>

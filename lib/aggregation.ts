@@ -59,8 +59,6 @@ export function aggregateHexes(
       oepnv: { value: null, n: null },
     };
 
-    // console.log("hexData", hexData);
-
     for (const place of ["total", "drinnen", "draussen", "oepnv"] as Place[]) {
       const placeData = hexData[place];
       if (!placeData) continue;

@@ -1,17 +1,20 @@
 import { useEffect, useState } from "react";
 import clsx from "clsx";
 import type { RadarData } from "../lib/types";
+import { COLOR_RAMP } from "../lib/constants";
 
 type EmotionRadarProps = {
   data: RadarData;
   maxValue?: number;
   className?: string;
+  metric: string;
 };
 
 export function EmotionRadar({
   data,
   maxValue = 5,
   className,
+  metric,
 }: EmotionRadarProps) {
   // normalise input so we never get undefined/NaN
   const entries = Object.entries(data || {});
@@ -116,8 +119,18 @@ export function EmotionRadar({
         {/* gradient definition */}
         <defs>
           <radialGradient id="radarGradient" cx="50%" cy="50%" r="60%">
-            <stop offset="0%" stopColor="#e6f7f7" stopOpacity="0.6" />
-            <stop offset="100%" stopColor="#2DD4BF" stopOpacity="0.6" />
+            <stop
+              offset="0%"
+              // @ts-ignore
+              stopColor={COLOR_RAMP[metric][0].color}
+              stopOpacity="0.6"
+            />
+            <stop
+              offset="100%"
+              // @ts-ignore
+              stopColor={COLOR_RAMP[metric][3].color}
+              stopOpacity="0.6"
+            />
           </radialGradient>
         </defs>
 
@@ -157,7 +170,8 @@ export function EmotionRadar({
         <polygon
           points={polygonPoints}
           fill="url(#radarGradient)"
-          stroke="#5EEAD4"
+          // @ts-ignore
+          stroke={COLOR_RAMP[metric][3].color}
           strokeWidth={2}
         />
 

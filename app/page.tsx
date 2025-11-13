@@ -49,12 +49,6 @@ export default function HomePage() {
     setLoading(true);
     loadHexData()
       .then((result) => {
-        console.log(
-          "loadHexData resolved with",
-          Object.keys(result).length,
-          "hexes"
-        );
-
         setRawData(result);
         setError(null);
       })
@@ -170,7 +164,7 @@ export default function HomePage() {
                 <div className="flex items-center gap-3">
                   <div className="flex-1 rounded-xl bg-metric-card p-3">
                     <p className="text-[11px] uppercase tracking-widest text-slate-400">
-                      Teilnehmer:innen
+                      Einträge
                     </p>
                     <p className="mt-1 text-lg font-semibold text-primary-50">
                       ≥ {filters.minParticipants}

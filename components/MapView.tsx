@@ -34,18 +34,24 @@ function ensureProtocol() {
   return protocol;
 }
 
-const COLOR_STOP_VALUES = COLOR_RAMP.flatMap(({ value, color }) => [
-  value,
-  color,
-]);
-
+/**
+ * Build a color expression based on the current metric.
+ * This uses COLOR_RAMP[metric] instead of a hardcoded key.
+ */
 // @ts-ignore – MapLibre expression typings don't allow null but runtime does.
-const COLOR_EXPRESSION: maplibregl.ExpressionSpecification = [
-  "case",
-  ["==", ["feature-state", "value"], null],
-  "rgba(176,176,176,0.3)",
-  ["interpolate", ["linear"], ["feature-state", "value"], ...COLOR_STOP_VALUES],
-];
+function createColorExpression(
+  metric: Metric
+): maplibregl.ExpressionSpecification {
+  const ramp = COLOR_RAMP[metric];
+  const stopValues = ramp.flatMap(({ value, color }) => [value, color]);
+  // @ts-ignore – MapLibre expression typings don't allow null but runtime does.
+  return [
+    "case",
+    ["==", ["feature-state", "value"], null],
+    "rgba(176,176,176,0.3)",
+    ["interpolate", ["linear"], ["feature-state", "value"], ...stopValues],
+  ];
+}
 
 const CIRCLE_RADIUS_EXPRESSION: maplibregl.ExpressionSpecification = [
   "case",
@@ -180,7 +186,8 @@ export default function MapView({
           source: H3_SOURCE_NAME,
           "source-layer": H3_HEX_LAYER,
           paint: {
-            "fill-color": COLOR_EXPRESSION,
+            // use the current metric for the initial color expression
+            "fill-color": createColorExpression(metricRef.current),
             "fill-opacity": 0.4,
           },
         });
@@ -262,6 +269,17 @@ export default function MapView({
     }, 50);
     return () => window.clearTimeout(timeout);
   }, [mapData, mapLoaded]);
+
+  // update fill color ramp when metric changes
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !mapLoaded) return;
+
+    const newExpression = createColorExpression(metric);
+    if (map.getLayer("h3-fill")) {
+      map.setPaintProperty("h3-fill", "fill-color", newExpression);
+    }
+  }, [metric, mapLoaded]);
 
   // close popup when metric changes (optional but fine)
   useEffect(() => {
@@ -371,13 +389,13 @@ export default function MapView({
           <p class="mt-1">Durchschnitt: ${
             info.value != null ? info.value.toFixed(2) : "n/a"
           }</p>
-          <p class="mt-1">Teilnehmer:innen: ${info.n}</p>
+          <p class="mt-1">Einträge: ${info.n}</p>
           <table class="mt-3 w-full border-collapse text-xs">
             <thead>
               <tr>
                 <th class="text-left">Ort</th>
                 <th class="text-right">Wert</th>
-                <th class="text-right">Teiln.</th>
+                <th class="text-right">Eint.</th>
               </tr>
             </thead>
             <tbody>${tableRows}</tbody>
@@ -419,7 +437,7 @@ export default function MapView({
             {tooltip.info.value != null ? tooltip.info.value.toFixed(2) : "n/a"}
           </p>
           <p className="text-xs text-slate-300">
-            Teilnehmer:innen: {tooltip.info.hasData ? tooltip.info.n : "n/a"}
+            Einträge: {tooltip.info.hasData ? tooltip.info.n : "n/a"}
           </p>
           <p className="mt-3 text-[11px] uppercase tracking-[0.35em] text-slate-500">
             Aktive Orte
