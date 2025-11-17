@@ -77,15 +77,27 @@ export function EmotionRadar({
     );
   }, [labels.join("|"), values.map((v) => v.toFixed(3)).join("|")]);
 
-  if (labels.length < 3) {
+  // no data at all → show hex outline icon
+  if (entries.length === 0) {
     return (
-      <div
-        className={clsx(
-          "flex h-56 w-56 items-center justify-center rounded-full border border-dashed border-slate-600/60 text-xs text-slate-500",
-          className
-        )}
-      >
-        Zu wenige Werte
+      <div className="flex gap-2">
+        <svg
+          width="42"
+          height="37"
+          viewBox="0 0 42 37"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M6.125 9.59961L6.12598 9.59766L11.0771 1.00098L20.999 1.01074H21.001L30.9219 1.00098L35.874 9.59766L35.875 9.59961L40.8447 18.1865L35.875 26.7734L35.874 26.7754L30.9219 35.373L21.001 35.3623H20.999L11.0771 35.373L6.12598 26.7754L6.125 26.7734L1.1543 18.1865L6.125 9.59961Z"
+            stroke="#F4F4F6"
+            strokeWidth="2"
+          />
+        </svg>
+        <p className="text-sm">
+          Noch nichts ausgewählt. Tippe ein Hexagon an und entdecke die
+          Emotionen dahinter.
+        </p>
       </div>
     );
   }
@@ -166,7 +178,7 @@ export function EmotionRadar({
           );
         })}
 
-        {/* teal data shape */}
+        {/* data shape */}
         <polygon
           points={polygonPoints}
           fill="url(#radarGradient)"
@@ -174,14 +186,6 @@ export function EmotionRadar({
           stroke={COLOR_RAMP[metric][3].color}
           strokeWidth={2}
         />
-
-        {/* vertex dots */}
-        {/* {values.map((value, i) => {
-          const [x, y] = getPoint(value, i);
-          return (
-            <circle key={i} cx={x} cy={y} r={4} className="fill-teal-100" />
-          );
-        })} */}
 
         {/* value labels 1..max on vertical axis */}
         {Array.from({ length: levels }, (_, i) => {
@@ -201,16 +205,41 @@ export function EmotionRadar({
         })}
 
         {/* category labels around the circle */}
+        {/* category labels around the circle */}
         {labels.map((label, i) => {
-          const [x, y] = getPoint(maxValue + 0.5, i);
+          // shift labels 5px further out
+          const extraOffset = 15;
+          const [baseX, baseY] = getPoint(maxValue + 0.5, i);
+
+          // move outward along the radial direction
+          const angle = -Math.PI / 2 + i * angleStep;
+          const x = baseX + Math.cos(angle) * extraOffset;
+          const y = baseY + Math.sin(angle) * extraOffset;
+
+          // convert angle → degrees
+          const degrees = (angle * 180) / Math.PI;
+
+          // tangent rotation
+          let textRotation = degrees + 90;
+
+          // keep labels upright
+          if (textRotation > 90) textRotation -= 180;
+          if (textRotation < -90) textRotation += 180;
+
+          // special case: last label should flip the other way
+          if (i === labels.length - 1) {
+            textRotation += 180; // reverse direction
+          }
+
           return (
             <text
               key={label}
               x={x}
               y={y}
               textAnchor="middle"
-              dominantBaseline="central"
+              dominantBaseline="middle"
               className="fill-white text-[11px]"
+              transform={`rotate(${textRotation}, ${x}, ${y})`}
             >
               {label}
             </text>

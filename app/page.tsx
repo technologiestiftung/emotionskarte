@@ -111,7 +111,7 @@ export default function HomePage() {
       {/* FIXED TOP HEADER */}
       <header className="fixed inset-x-0 top-0 z-50 flex h-16 items-center justify-between bg-white px-6 shadow-md text-slate-900">
         <div className="flex items-center gap-3">
-          <Icon name={"logoEmo"} className={"w-16 h-16 text-black"} />
+          <Icon name={"logoEmo"} className={"w-20 h-20 text-black"} />
         </div>
 
         <div className="flex items-center gap-4 text-sm">

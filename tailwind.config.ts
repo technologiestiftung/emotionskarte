@@ -15,8 +15,7 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        display: ["Sora", "Inter", "system-ui", "sans-serif"],
-        sans: ["Inter", "system-ui", "sans-serif"],
+        sans: ["Lato", "sans-serif"],
       },
       colors: {
         primary: {

@@ -89,7 +89,7 @@ export default function Sidebar(props: SidebarProps) {
     <div className="flex h-full w-[473px] flex-col overflow-y-auto bg-emo-black text-slate-100 ring-1 ring-white/10 backdrop-blur-xl">
       {" "}
       <nav className="sticky top-0 z-10 border-b border-emo-blacktext bg-emo-black px-1 pt-1 text-sm font-medium">
-        <div className="flex w-full">
+        <div className="flex w-full gap-1">
           {TABS.map((item) => {
             const isActive = tab === item.key;
 
@@ -99,11 +99,11 @@ export default function Sidebar(props: SidebarProps) {
                 onClick={() => onTabChange(item.key)}
                 className={clsx(
                   // even width, aligned bottoms
-                  "flex-1 text-center px-4 py-3 border rounded-t-md transition",
+                  "flex-1 text-center px-4 py-3 border-2 rounded-t-md transition",
 
                   isActive
-                    ? "border-white/40 bg-emo-black text-white border-b-0 -mb-px"
-                    : "border-white/10 text-emo-greytext hover:text-white"
+                    ? "border-emo-greytext bg-emo-black text-white border-b-0 -mb-px"
+                    : "border-emo-greytext text-emo-greytext hover:text-white"
                 )}
               >
                 {item.label}
@@ -253,19 +253,17 @@ export default function Sidebar(props: SidebarProps) {
                 onChange={(value) => updateFilter({ minParticipants: value })}
               />*/}
 
-            {Object.keys(hexData).length !== 0 && (
-              <section className="grid gap-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-xl font-semibold text-slate-100 pb-2">
-                    Emotionenverteilung im Hexagon
-                  </h3>
-                </div>
+            <section className="grid gap-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xl font-semibold text-slate-100 pb-2">
+                  Emotionenverteilung im Hexagon
+                </h3>
+              </div>
 
-                <div className="flex justify-center">
-                  <EmotionRadar data={hexData} metric={metric} />
-                </div>
-              </section>
-            )}
+              <div className="flex justify-center">
+                <EmotionRadar data={hexData} metric={metric} />
+              </div>
+            </section>
 
             <section className="mt-auto border-t border-white/5 pt-6">
               <p className="text-xs text-emo-greytext">
