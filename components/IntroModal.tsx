@@ -4,23 +4,28 @@ import { useEffect, useState } from "react";
 
 const STORAGE_KEY = "emotionskarte_has_seen_intro";
 
-export default function IntroModal() {
-  const [visible, setVisible] = useState(false);
+export type ModalProps = {
+  modalVisible: boolean;
+  setModalVisible: (visible: boolean) => void;
+};
+
+export default function IntroModal(props: ModalProps) {
+  const { modalVisible, setModalVisible } = props;
 
   useEffect(() => {
     if (typeof window === "undefined") return;
     const hasSeen = window.localStorage.getItem(STORAGE_KEY) === "1";
-    setVisible(!hasSeen);
+    setModalVisible(!hasSeen);
   }, []);
 
   const close = () => {
     if (typeof window !== "undefined") {
       window.localStorage.setItem(STORAGE_KEY, "1");
     }
-    setVisible(false);
+    setModalVisible(false);
   };
 
-  if (!visible) {
+  if (!modalVisible) {
     return null;
   }
 

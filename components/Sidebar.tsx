@@ -19,7 +19,7 @@ const TABS: { key: MetricGroupKey; label: string }[] = [
   { key: "umwelt", label: "Umweltwahrnehmung" },
   { key: "daten", label: "Daten" },
 ];
-import Icon from "./Icon"; // adjust path if needed
+import Icon from "./Icon";
 
 const PLACE_OPTIONS: Place[] = ["total", "drinnen", "draussen", "oepnv"];
 
@@ -38,13 +38,10 @@ export type SidebarProps = {
 function mockDistribution(tab: MetricGroupKey): number[] {
   switch (tab) {
     case "emotionen":
-      // values for emotion tab (1–5)
       return [60, 45, 12, 55, 90];
     case "umwelt":
-      // values for environment tab
       return [30, 50, 25, 70, 40];
     default:
-      // fallback (e.g. daten)
       return [0, 0, 0, 0, 0];
   }
 }
@@ -89,7 +86,6 @@ export default function Sidebar(props: SidebarProps) {
   const metricOptions = tab === "daten" ? [] : METRIC_GROUPS[tab];
 
   const sidebarContent = (
-    //w-[23rem]
     <div className="flex h-full w-[473px] flex-col overflow-hidden bg-panel-gradient text-slate-100 shadow-sidebar ring-1 ring-white/10 backdrop-blur-xl">
       <nav className="border-b border-white/10 px-6 pt-5 text-sm font-medium">
         <div className="flex gap-6 text-center">
@@ -252,8 +248,7 @@ export default function Sidebar(props: SidebarProps) {
                 step={1}
                 value={filters.minParticipants}
                 onChange={(value) => updateFilter({ minParticipants: value })}
-              />
-            </section> */}
+              />*/}
 
             {Object.keys(hexData).length !== 0 && (
               <section className="grid gap-4">
@@ -263,15 +258,13 @@ export default function Sidebar(props: SidebarProps) {
                   </h3>
                 </div>
 
-                <div className="flex justify-center  ">
-                  {/* Animated radar chart here */}
+                <div className="flex justify-center">
                   <EmotionRadar data={hexData} metric={metric} />
                 </div>
               </section>
             )}
 
             <section className="mt-auto border-t border-white/5 pt-6">
-              {" "}
               <p className="text-xs text-emo-greytext">
                 Der Datensatz umfasst den Zeitraum von Januar 2020 bis Dezember
                 2025. Die Karten-Visualisierung basiert auf den App-Daten mit
@@ -288,15 +281,17 @@ export default function Sidebar(props: SidebarProps) {
 
   return (
     <>
+      {/* MOBILE TOGGLE BUTTON – moved below header */}
       <button
-        className="fixed left-4 top-4 z-30 flex h-12 w-12 items-center justify-center rounded-full border border-primary-200/50 bg-emo-black text-primary-100 shadow-glow transition hover:border-primary-200 md:hidden"
+        className="fixed left-4 top-20 z-30 flex h-12 w-12 items-center justify-center rounded-full border border-primary-200/50 bg-emo-black text-primary-100 shadow-glow transition hover:border-primary-200 md:hidden"
         onClick={() => setMobileOpen((value) => !value)}
         aria-label="Sidebar umschalten"
       >
         {mobileOpen ? "×" : "≡"}
       </button>
 
-      <div className="pointer-events-none fixed inset-y-0 left-0 z-20 flex md:pointer-events-auto">
+      {/* SIDEBAR – offset by header height (top-16) */}
+      <div className="pointer-events-none fixed left-0 top-16 bottom-0 z-20 flex md:pointer-events-auto">
         <div
           className={clsx(
             "pointer-events-auto h-full transition-transform duration-300",

@@ -34,6 +34,8 @@ const DEFAULT_FILTERS: Filters = {
   hideNoData: false,
 };
 
+import Icon from "../components/Icon";
+
 export default function HomePage() {
   const [tab, setTab] = useState<MetricGroupKey>("emotionen");
   const [metric, setMetric] = useState<Metric>(DEFAULT_METRIC);
@@ -44,6 +46,7 @@ export default function HomePage() {
   const [error, setError] = useState<string | null>(null);
   const [hexId, setHexId] = useState<string | null>(null);
   const [hexData, setHexData] = useState<RadarData>({});
+  const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -86,7 +89,6 @@ export default function HomePage() {
       const out: RadarData = {};
       for (const m of group) {
         const label = METRIC_LABELS[m];
-        // numbers or fallback to 0
         out[label] = selectedHexDataPlace[m] ?? 0;
       }
       return out;
@@ -100,9 +102,33 @@ export default function HomePage() {
   }, [hexId, places, rawData, tab]);
 
   return (
-    <main className="relative flex h-screen flex-col bg-emo-black text-slate-100">
-      <IntroModal />
-      <div className="relative flex h-full w-full">
+    <main className="relative flex min-h-screen flex-col bg-emo-black text-slate-100">
+      <IntroModal
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+      />
+
+      {/* FIXED TOP HEADER */}
+      <header className="fixed inset-x-0 top-0 z-50 flex h-16 items-center justify-between bg-white px-6 shadow-md text-slate-900">
+        <div className="flex items-center gap-3">
+          <Icon name={"logoEmo"} className={"w-16 h-16 text-black"} />
+        </div>
+
+        <div className="flex items-center gap-4 text-sm">
+          <button
+            className="underline-offset-2 hover:underline"
+            onClick={() => setModalVisible(true)}
+          >
+            Über das Projekt
+          </button>
+          {/* <button className="rounded border border-slate-300 px-3 py-1 text-xs font-medium">
+            DE 
+          </button> */}
+        </div>
+      </header>
+
+      {/* CONTENT BELOW FIXED HEADER */}
+      <div className="relative flex w-full flex-1 pt-16">
         <Sidebar
           tab={tab}
           onTabChange={setTab}
@@ -124,67 +150,9 @@ export default function HomePage() {
             error={error}
             setHexId={setHexId}
           />
-          <div className="pointer-events-none absolute inset-0 z-20 flex flex-col justify-between">
-            {/* @todo */}
-            {/* <div className="flex justify-end px-6 pt-6">
-              <div className="pointer-events-auto hidden max-w-sm flex-col gap-2 rounded-2xl border border-white/10 bg-emo-blacktext/85 p-4 text-sm backdrop-blur md:flex">
-                <label
-                  className="text-[11px] uppercase tracking-[0.35em] text-slate-400"
-                  htmlFor="map-search"
-                >
-                  Ortssuche
-                </label>
-                <div className="flex items-center gap-2 rounded-full bg-slate-900/80 px-4 py-2 ring-1 ring-white/10">
-                  <span className="text-primary-200">⌕</span>
-                  <input
-                    id="map-search"
-                    placeholder="Ort oder Adresse eingeben"
-                    className="w-full bg-transparent text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none"
-                    disabled
-                  />
-                </div>
-                <p className="text-xs text-slate-400">
-                  Die Suche ist in dieser Demo deaktiviert.
-                </p>
-              </div>
-            </div> */}
-            {/* @todo */}
-            {/* <div className="pointer-events-none px-6 pb-8">
-              <div className="pointer-events-auto inline-flex max-w-md flex-col gap-3 rounded-3xl border border-white/5 bg-emo-blacktext/80 p-4 text-xs shadow-glow backdrop-blur">
-                <p className="text-[11px] uppercase tracking-[0.4em] text-primary-100">
-                  Aktives Hexagon
-                </p>
-                <div className="flex items-center justify-between text-sm font-semibold text-slate-100">
-                  <span>{metric}</span>
-                  <span>
-                    {filters.minValue.toFixed(1)} –{" "}
-                    {filters.maxValue.toFixed(1)}
-                  </span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="flex-1 rounded-xl bg-metric-card p-3">
-                    <p className="text-[11px] uppercase tracking-widest text-slate-400">
-                      Einträge
-                    </p>
-                    <p className="mt-1 text-lg font-semibold text-primary-50">
-                      ≥ {filters.minParticipants}
-                    </p>
-                  </div>
-                  <div className="flex h-16 w-16 items-center justify-center rounded-full border border-primary-200/50 bg-slate-900/60 text-center text-[11px] uppercase tracking-wide text-primary-100">
-                    {safePlaces.length ? PLACE_LABELS[safePlaces[0]] : "Ort"}
-                    <span className="sr-only">aktiver Ort</span>
-                  </div>
-                </div>
-              </div>
-            </div> */}
-          </div>
           <Legend metric={metric} />
         </div>
       </div>
-
-      <footer className="pointer-events-none hidden" id="impressum">
-        <div id="datenschutz" />
-      </footer>
     </main>
   );
 }
