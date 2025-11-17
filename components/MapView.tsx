@@ -161,6 +161,7 @@ export default function MapView({
 
   const dataRef = useRef(mapData);
   const metricRef = useRef<Metric>(metric);
+  const selectedHexIdRef = useRef<string | null>(null);
 
   const [mapLoaded, setMapLoaded] = useState(false);
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
@@ -169,6 +170,31 @@ export default function MapView({
   // keep refs in sync with latest props
   dataRef.current = mapData;
   metricRef.current = metric;
+
+  // helper to clear selected feature state
+  function clearSelection() {
+    const map = mapRef.current;
+    const prevId = selectedHexIdRef.current;
+    if (!map || !prevId) return;
+
+    try {
+      map.setFeatureState(
+        { source: H3_SOURCE_NAME, sourceLayer: H3_HEX_LAYER, id: prevId },
+        { selected: false }
+      );
+      map.setFeatureState(
+        { source: H3_SOURCE_NAME, sourceLayer: H3_CENTROID_LAYER, id: prevId },
+        { selected: false }
+      );
+    } catch (error) {
+      if (!featureStateWarningShown) {
+        console.warn("Failed to clear selection feature state", error);
+        featureStateWarningShown = true;
+      }
+    }
+
+    selectedHexIdRef.current = null;
+  }
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) {
@@ -252,9 +278,24 @@ export default function MapView({
           source: H3_SOURCE_NAME,
           "source-layer": H3_HEX_LAYER,
           paint: {
-            "line-color": "#222",
-            "line-opacity": 0.1,
-            "line-width": 0.5,
+            "line-color": [
+              "case",
+              ["boolean", ["feature-state", "selected"], false],
+              "#F4F4F6", // thicker when selected
+              "#222", // default outline
+            ],
+            "line-opacity": [
+              "case",
+              ["boolean", ["feature-state", "selected"], false],
+              0.8, // thicker when selected
+              0.1, // default outline
+            ],
+            "line-width": [
+              "case",
+              ["boolean", ["feature-state", "selected"], false],
+              3, // thicker when selected
+              0.5, // default outline
+            ],
           },
         });
       }
@@ -278,12 +319,14 @@ export default function MapView({
 
       setupInteractions(map);
 
+      // click on empty map → close popup + clear selection
       map.on("click", (event) => {
         const features = map.queryRenderedFeatures(event.point, {
           layers: ["h3-fill", "h3-centroids"],
         });
         if (!features.length) {
           popupRef.current?.remove();
+          clearSelection();
           setHexId(null);
         }
       });
@@ -339,6 +382,8 @@ export default function MapView({
       popupRef.current.remove();
       popupRef.current = null;
     }
+    // also clear selection when metric changes, to avoid stale highlight
+    clearSelection();
   }, [metric]);
 
   const activePlacesLabel = useMemo(() => {
@@ -408,14 +453,52 @@ export default function MapView({
       return;
     }
     const hexId = String(feature.id);
+
+    // external state
     setHexId(hexId);
+
     const info = dataRef.current[hexId];
     if (!info) {
       return;
     }
+
+    const map = mapRef.current;
+    if (!map) return;
+
+    // --- selection highlight logic ---
+    // clear previous selection
+    clearSelection();
+
+    try {
+      map.setFeatureState(
+        { source: H3_SOURCE_NAME, sourceLayer: H3_HEX_LAYER, id: hexId },
+        { selected: true }
+      );
+      map.setFeatureState(
+        { source: H3_SOURCE_NAME, sourceLayer: H3_CENTROID_LAYER, id: hexId },
+        { selected: true }
+      );
+      selectedHexIdRef.current = hexId;
+    } catch (error) {
+      if (!featureStateWarningShown) {
+        console.warn("Feature state selection failed", error);
+        featureStateWarningShown = true;
+      }
+    }
+    // --- end selection highlight logic ---
+
     const popup =
       popupRef.current ??
       new maplibregl.Popup({ closeOnClick: true, closeButton: true });
+
+    // if it's a new popup instance, connect close event once
+    if (!popupRef.current) {
+      popup.on("close", () => {
+        clearSelection();
+        setHexId(null);
+      });
+    }
+
     popupRef.current = popup;
 
     const currentMetric = metricRef.current;
