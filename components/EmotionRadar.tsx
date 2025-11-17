@@ -176,12 +176,12 @@ export function EmotionRadar({
         />
 
         {/* vertex dots */}
-        {values.map((value, i) => {
+        {/* {values.map((value, i) => {
           const [x, y] = getPoint(value, i);
           return (
             <circle key={i} cx={x} cy={y} r={4} className="fill-teal-100" />
           );
-        })}
+        })} */}
 
         {/* value labels 1..max on vertical axis */}
         {Array.from({ length: levels }, (_, i) => {
