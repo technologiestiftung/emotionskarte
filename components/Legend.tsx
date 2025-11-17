@@ -84,8 +84,8 @@ export default function Legend({ metric }: LegendProps) {
                 })}
               </div>
               <div className="mt-2 flex justify-between text-[10px] text-slate-300">
-                <span>Min. 1 TN</span>
-                <span>Max. 250 TN</span>
+                <span>1 Eintrag</span>
+                <span>{"50+ Einträge"}</span>
               </div>
             </div>
           </>

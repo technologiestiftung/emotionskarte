@@ -34,6 +34,75 @@ function ensureProtocol() {
   return protocol;
 }
 
+// 5 non-linear buckets based on n
+const SIZE_BUCKET = [
+  "step",
+  ["coalesce", ["feature-state", "n"], 0],
+  0, // default for n <= 0
+
+  1,
+  0.2, // 1–4
+  5,
+  0.4, // 5–9
+  10,
+  0.6, // 10–24
+  25,
+  0.8, // 25–49
+  50,
+  1.0, // 50+
+];
+
+// visible → 1, invisible → 0
+const VISIBLE_FACTOR = [
+  "case",
+  ["boolean", ["feature-state", "visible"], false],
+  1,
+  0,
+];
+
+const INCREASER = 2.4;
+const CIRCLE_RADIUS_EXPRESSION = [
+  "interpolate",
+  ["exponential", 2],
+  ["zoom"],
+
+  // zoom 9
+  9,
+  [
+    "*",
+    1.75 * INCREASER, // base radius at z9
+    SIZE_BUCKET,
+    VISIBLE_FACTOR,
+  ],
+
+  // zoom 12
+  12,
+  [
+    "*",
+    14 * INCREASER, // base radius at z12 (fits hex)
+    SIZE_BUCKET,
+    VISIBLE_FACTOR,
+  ],
+
+  // zoom 15
+  15,
+  [
+    "*",
+    112 * INCREASER, // base radius at z15
+    SIZE_BUCKET,
+    VISIBLE_FACTOR,
+  ],
+
+  // zoom 18 (NEW)
+  18,
+  [
+    "*",
+    896 * INCREASER, // 14 * 2^(18-12) = 896
+    SIZE_BUCKET,
+    VISIBLE_FACTOR,
+  ],
+];
+
 /**
  * Build a color expression based on the current metric.
  * This uses COLOR_RAMP[metric] instead of a hardcoded key.
@@ -52,27 +121,6 @@ function createColorExpression(
     ["interpolate", ["linear"], ["feature-state", "value"], ...stopValues],
   ];
 }
-
-const CIRCLE_RADIUS_EXPRESSION: maplibregl.ExpressionSpecification = [
-  "case",
-  ["boolean", ["feature-state", "visible"], false],
-  [
-    "interpolate",
-    ["linear"],
-    ["coalesce", ["feature-state", "n"], 0],
-    0,
-    0,
-    5,
-    4,
-    10,
-    8,
-    25,
-    14,
-    50,
-    18,
-  ],
-  0,
-];
 
 const CIRCLE_OPACITY_EXPRESSION: maplibregl.ExpressionSpecification = [
   "coalesce",
@@ -132,6 +180,7 @@ export default function MapView({
       center: MAP_INITIAL_VIEW.center,
       zoom: MAP_INITIAL_VIEW.zoom,
       attributionControl: false,
+      hash: true,
     });
 
     mapRef.current = map;
