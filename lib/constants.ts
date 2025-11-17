@@ -118,3 +118,8 @@ export const COLOR_RAMP: Record<Metric, { value: number; color: string }[]> = {
   EnvCrowded: COLOR_RAMP_Anxiety,
   EnvironmentGreeness: COLOR_RAMP_Energy,
 };
+
+export const BERLIN_BOUNDS: maplibregl.LngLatBoundsLike = [
+  [11.59835, 51.43826], // expanded south-west (~100 km buffer)
+  [15.25116, 53.57551], // expanded north-east (~100 km buffer)
+];

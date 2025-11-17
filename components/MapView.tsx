@@ -19,6 +19,7 @@ import {
   PLACE_LABELS,
   PMTILES_ARCHIVE,
   PMTILES_ARCHIVE_PATH,
+  BERLIN_BOUNDS,
 } from "../lib/constants";
 import type { HexAggregated, Metric, Place } from "../lib/types";
 import { METRIC_LABELS } from "../lib/constants";
@@ -178,6 +179,7 @@ export default function MapView({
       // @ts-ignore
       style: createBaseMapStyle(),
       center: MAP_INITIAL_VIEW.center,
+      maxBounds: BERLIN_BOUNDS,
       zoom: MAP_INITIAL_VIEW.zoom,
       attributionControl: false,
       hash: true,
