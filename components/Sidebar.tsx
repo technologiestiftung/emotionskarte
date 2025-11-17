@@ -202,7 +202,7 @@ export default function Sidebar(props: SidebarProps) {
               </div>
             </section>
 
-            <EmotionBars
+            {/* <EmotionBars
               tab={tab}
               range={[filters.minValue, filters.maxValue]}
               onRangeChange={([minValue, maxValue]) =>
@@ -212,7 +212,7 @@ export default function Sidebar(props: SidebarProps) {
                 })
               }
               metric={metric}
-            />
+            /> */}
 
             {/* <section className="space-y-5 rounded-3xl border border-white/5 bg-slate-900/30 p-5">
               <div className="space-y-2">
