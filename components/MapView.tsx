@@ -23,6 +23,7 @@ import {
 } from "../lib/constants";
 import type { HexAggregated, Metric, Place } from "../lib/types";
 import { METRIC_LABELS } from "../lib/constants";
+import { metricClass } from "../lib/utils";
 
 let featureStateWarningShown = false;
 let protocol: Protocol | null = null;
@@ -419,38 +420,18 @@ export default function MapView({
 
     const currentMetric = metricRef.current;
 
-    const tableRows = (Object.keys(info.places) as Place[])
-      .map((place) => {
-        const entry = info.places[place];
-        const value = entry.value != null ? entry.value.toFixed(2) : "n/a";
-        const n = entry.n != null ? entry.n : "n/a";
-        return `<tr><td>${PLACE_LABELS[place]}</td><td class="text-right">${value}</td><td class="text-right">${n}</td></tr>`;
-      })
-      .join("");
-
     popup
       .setLngLat(event.lngLat)
       .setHTML(
         `
-        <div class="min-w-[220px] text-sm bg-emo-black p-3">
-          <h3 class="text-base font-semibold">Hex ${hexId}</h3>
-          <p class="mt-1">Durchschnittswert für ${
-            METRIC_LABELS[currentMetric]
-          }</p>
-          <p class="mt-1">Durchschnitt: ${
-            info.value != null ? info.value.toFixed(2) : "n/a"
-          }</p>
-          <p class="mt-1">Einträge: ${info.n}</p>
-          <table class="mt-3 w-full border-collapse text-xs">
-            <thead>
-              <tr>
-                <th class="text-left">Ort</th>
-                <th class="text-right">Wert</th>
-                <th class="text-right">Eint.</th>
-              </tr>
-            </thead>
-            <tbody>${tableRows}</tbody>
-          </table>
+        <div class=" max-w-[calc(100vw-3rem)] text-sm bg-emo-black p-3 rounded-md border-2 border-emo-greytext break-words">
+          <h3 class="text-base font-semibold">Werte in diesem Hex</h3>
+          <p class="mt-1 text-lg ${metricClass(currentMetric, "text")}" >
+          Durchschnittswert für ${METRIC_LABELS[currentMetric]}: ${
+          info.value != null ? info.value.toFixed(1) : "k.a."
+        }
+          </p>
+          <p class="mt-1 text-lg">Einträge: ${info.n}</p>
         </div>
       `
       )

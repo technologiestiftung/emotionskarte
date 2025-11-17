@@ -17,13 +17,10 @@ export default function Legend({ metric }: LegendProps) {
         className="
       pointer-events-auto
       w-[300px]
-      rounded-3xl
-      border border-primary-500/60
+      rounded-md border-2 border-emo-greytext
       bg-emo-black
       p-4
-      text-xs text-slate-100
-      shadow-glow
-      backdrop-blur
+      text-xs 
     "
       >
         {/* Header — click to toggle */}

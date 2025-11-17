@@ -18,6 +18,20 @@ button {
   cursor: pointer;
 }
 
+.maplibregl-popup {
+  max-width: unset !important;
+}
+
 .maplibregl-popup-content {
   padding: 0px !important;
+  max-width: unset !important;
+}
+
+/* Bigger close button, pinned top-right */
+.maplibregl-popup-close-button {
+  font-size: 1.5rem; /* bigger "×" */
+  line-height: 1;
+  padding: 0.25rem 0.5rem; /* more click target */
+  top: 0.35rem;
+  right: 0.5rem;
 }
