@@ -86,7 +86,7 @@ export default function Sidebar(props: SidebarProps) {
   const metricOptions = tab === "daten" ? [] : METRIC_GROUPS[tab];
 
   const sidebarContent = (
-    <div className="flex h-full w-[473px] flex-col overflow-hidden bg-panel-gradient text-slate-100 shadow-sidebar ring-1 ring-white/10 backdrop-blur-xl">
+    <div className="flex h-full w-[473px] flex-col overflow-hidden bg-emo-black text-slate-100 ring-1 ring-white/10 backdrop-blur-xl">
       <nav className="border-b border-white/10 px-6 pt-5 text-sm font-medium">
         <div className="flex gap-6 text-center">
           {TABS.map((item) => (
