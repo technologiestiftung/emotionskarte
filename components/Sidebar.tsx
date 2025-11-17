@@ -86,30 +86,33 @@ export default function Sidebar(props: SidebarProps) {
   const metricOptions = tab === "daten" ? [] : METRIC_GROUPS[tab];
 
   const sidebarContent = (
-    <div className="flex h-full w-[473px] flex-col overflow-hidden bg-emo-black text-slate-100 ring-1 ring-white/10 backdrop-blur-xl">
-      <nav className="border-b border-white/10 px-6 pt-5 text-sm font-medium">
-        <div className="flex gap-6 text-center">
-          {TABS.map((item) => (
-            <button
-              key={item.key}
-              onClick={() => onTabChange(item.key)}
-              className={clsx(
-                "relative pb-3 transition",
-                tab === item.key
-                  ? [
-                      "text-white",
-                      "after:absolute after:inset-x-0 after:-bottom-px after:h-0.5",
-                    ]
-                  : "text-emo-greytext hover:text-slate-100"
-              )}
-            >
-              {item.label}
-            </button>
-          ))}
+    <div className="flex h-full w-[473px] flex-col overflow-y-auto bg-emo-black text-slate-100 ring-1 ring-white/10 backdrop-blur-xl">
+      {" "}
+      <nav className="sticky top-0 z-10 border-b border-emo-blacktext bg-emo-black px-1 pt-1 text-sm font-medium">
+        <div className="flex w-full">
+          {TABS.map((item) => {
+            const isActive = tab === item.key;
+
+            return (
+              <button
+                key={item.key}
+                onClick={() => onTabChange(item.key)}
+                className={clsx(
+                  // even width, aligned bottoms
+                  "flex-1 text-center px-4 py-3 border rounded-t-md transition",
+
+                  isActive
+                    ? "border-white/40 bg-emo-black text-white border-b-0 -mb-px"
+                    : "border-white/10 text-emo-greytext hover:text-white"
+                )}
+              >
+                {item.label}
+              </button>
+            );
+          })}
         </div>
       </nav>
-
-      <div className="flex-1 overflow-y-auto px-6 pb-10 pt-6">
+      <div className="flex-1  px-6 pb-10 pt-6">
         {tab !== "daten" && (
           <div className="flex min-h-full flex-col gap-7">
             <header className="border-b border-white/5 pb-6">
