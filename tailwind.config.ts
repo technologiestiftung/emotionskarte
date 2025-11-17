@@ -35,7 +35,7 @@ const config: Config = {
           blacktext: "#2F2E38",
           greytext: "#928FA3",
 
-          stress: "#04BEAC",
+          stress: "#CD3F32",
           happy: "#F8D130",
           loneliness: "#0F29DB",
           anxiety: "#65509E",

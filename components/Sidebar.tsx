@@ -115,7 +115,7 @@ export default function Sidebar(props: SidebarProps) {
 
       <div className="flex-1 overflow-y-auto px-6 pb-10 pt-6">
         {tab !== "daten" && (
-          <div className="flex flex-col gap-7">
+          <div className="flex min-h-full flex-col gap-7">
             <header className="border-b border-white/5 pb-6">
               <h2 className="mt-3 font-display text-2xl font-semibold leading-tight">
                 Wo ist Berlin{" "}
@@ -270,7 +270,8 @@ export default function Sidebar(props: SidebarProps) {
               </section>
             )}
 
-            <section className="border-t border-white/5 pt-6">
+            <section className="mt-auto border-t border-white/5 pt-6">
+              {" "}
               <p className="text-xs text-emo-greytext">
                 Der Datensatz umfasst den Zeitraum von Januar 2020 bis Dezember
                 2025. Die Karten-Visualisierung basiert auf den App-Daten mit
