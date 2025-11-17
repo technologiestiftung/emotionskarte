@@ -171,6 +171,18 @@ export default function MapView({
   dataRef.current = mapData;
   metricRef.current = metric;
 
+  const handleZoomIn = () => {
+    const map = mapRef.current;
+    if (!map) return;
+    map.zoomIn();
+  };
+
+  const handleZoomOut = () => {
+    const map = mapRef.current;
+    if (!map) return;
+    map.zoomOut();
+  };
+
   // helper to clear selected feature state
   function clearSelection() {
     const map = mapRef.current;
@@ -524,6 +536,33 @@ export default function MapView({
   return (
     <div className="relative h-full w-full">
       <div ref={containerRef} className="absolute inset-0 h-full" />
+      <div className="pointer-events-none absolute top-3 right-3 z-20">
+        <div className="pointer-events-auto flex flex-col overflow-hidden rounded-md border border-emo-greytext bg-emo-black">
+          {/* Zoom in */}
+          <button
+            type="button"
+            aria-label="Zoom in"
+            onClick={handleZoomIn}
+            className="flex h-10 w-10 items-center justify-center font-light text-white hover:bg-white/10 text-3xl"
+          >
+            +
+          </button>
+
+          {/* Divider */}
+          <div className="h-px w-full bg-white/20" />
+
+          {/* Zoom out */}
+          <button
+            type="button"
+            aria-label="Zoom out"
+            onClick={handleZoomOut}
+            className="flex h-10 w-10 items-center justify-center font-light text-white hover:bg-white/10 text-3xl"
+          >
+            –
+          </button>
+        </div>
+      </div>
+
       {loading && (
         <div className="absolute inset-0 z-10 flex items-center justify-center bg-emo-black text-sm uppercase tracking-[0.4em] text-slate-200">
           Daten werden geladen …
