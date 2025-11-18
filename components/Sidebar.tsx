@@ -286,7 +286,7 @@ export default function Sidebar(props: SidebarProps) {
     <>
       {/* MOBILE TOGGLE BUTTON – moved below header */}
       <button
-        className="fixed left-4 top-20 z-30 flex h-12 w-12 items-center justify-center rounded-full border border-primary-200/50 bg-emo-black text-primary-100 shadow-glow transition hover:border-primary-200 md:hidden"
+        className="fixed left-4 top-20 z-30 flex h-12 w-12 items-center justify-center rounded-full border border-primary-200/50 bg-emo-black  shadow-glow transition hover:border-primary-200 md:hidden"
         onClick={() => setMobileOpen((value) => !value)}
         aria-label="Sidebar umschalten"
       >
@@ -351,10 +351,8 @@ function FilterSlider({ label, min, max, step, value, onChange }: SliderProps) {
 function DataTabContent() {
   return (
     <div className="space-y-8 text-sm text-slate-200">
-      <section className="space-y-3 rounded-3xl border border-white/5 bg-slate-900/30 p-6">
-        <h3 className="text-lg font-semibold text-primary-100">
-          Über die Daten
-        </h3>
+      <section className="">
+        <h3 className="text-lg font-semibold pb-2">Über die Daten</h3>
         <p>
           Die Emotionen und Umweltwahrnehmungen stammen aus einer Befragung
           Berliner Bürger:innen. Alle Antworten wurden anonymisiert und auf
@@ -366,27 +364,25 @@ function DataTabContent() {
           bereits ein Kontext genügt, um Daten für ein Hexagon anzuzeigen.
         </p>
       </section>
-      <section className="grid gap-3 rounded-3xl border border-white/5 bg-slate-900/30 p-6">
-        <h4 className="text-base font-semibold text-primary-100">
-          Variablen & Skalen
-        </h4>
+      <section className="">
+        <h4 className="text-base font-semibold pb-2 ">Variablen & Skalen</h4>
         <p>
           Skala 1 (niedrig) bis 5 (hoch) für Emotionen wie Stress, Glück oder
           Energie sowie für Umweltfaktoren wie Sicherheit oder Urbanes Grün.
           Zusätzlich wird die Anzahl der Teilnehmer:innen je Hexagon erfasst.
         </p>
       </section>
-      <section className="grid gap-3 rounded-3xl border border-white/5 bg-slate-900/30 p-6">
-        <h4 className="text-base font-semibold text-primary-100">Methodik</h4>
+      <section className="">
+        <h4 className="text-base font-semibold pb-2 ">Methodik</h4>
         <p>
           Teilnehmende ordneten Wahrnehmungen konkreten Orten zu. Pro Ort und
           Kontext wurden Mittelwerte gebildet, anschließend in H3-Zellen
           aggregiert und mit Feature States dynamisch in die Karte gespielt.
         </p>
       </section>
-      <section className="space-y-4 rounded-3xl border border-white/5 bg-slate-900/30 p-6">
-        <h4 className="text-base font-semibold text-primary-100">Downloads</h4>
-        <ul className="space-y-2 text-primary-100 underline-offset-2">
+      <section className="">
+        <h4 className="text-base font-semibold pb-2 ">Downloads</h4>
+        <ul className="space-y-2  underline-offset-2">
           <li>
             <a
               href="/indoors_by_hex_id_res8.csv"
@@ -416,12 +412,17 @@ function DataTabContent() {
           </li>
         </ul>
       </section>
-      <section className="space-y-2 rounded-3xl border border-white/5 bg-slate-900/30 p-6 text-xs text-slate-400">
+      <section className="">
+        <h4 className="text-base font-semibold pb-2 ">Datenschutz</h4>
         <p>
-          Datenschutz: Alle Daten wurden aggregiert, sodass keine Rückschlüsse
-          auf Einzelpersonen möglich sind.
+          Alle Daten wurden aggregiert, sodass keine Rückschlüsse auf
+          Einzelpersonen möglich sind.
         </p>
-        <p>Lizenz: CC BY 4.0 · Kontakt: emotionskarte@berlin.de</p>
+      </section>
+      <section className="">
+        <h4 className="text-base font-semibold pb-2 ">Lizenz</h4>
+
+        <p>CC BY 4.0 · Kontakt: emotionskarte@berlin.de</p>
       </section>
     </div>
   );
