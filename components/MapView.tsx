@@ -520,13 +520,13 @@ export default function MapView({
       .setHTML(
         `
         <div class=" max-w-[calc(100vw-3rem)] text-sm bg-emo-black p-3 rounded-md border-2 border-emo-greytext break-words">
-          <h3 class="text-base font-semibold">Werte in diesem Hex</h3>
+          <h3 class="text-base font-semibold">Werte in diesem Hexagon</h3>
           <p class="mt-1 text-lg ${metricClass(currentMetric, "text")}" >
           Durchschnittswert für ${METRIC_LABELS[currentMetric]}: ${
           info.value != null ? info.value.toFixed(1) : "k.a."
         }
           </p>
-          <p class="mt-1 text-lg">Einträge: ${info.n}</p>
+          <p class="mt-0 text-lg">Einträge: ${info.n}</p>
         </div>
       `
       )
