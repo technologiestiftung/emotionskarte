@@ -50,6 +50,7 @@ button {
 
 .maplibregl-popup {
   max-width: unset !important;
+  z-index: 99;
 }
 
 .maplibregl-popup-content {

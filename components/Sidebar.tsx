@@ -86,7 +86,7 @@ export default function Sidebar(props: SidebarProps) {
   const metricOptions = tab === "daten" ? [] : METRIC_GROUPS[tab];
 
   const sidebarContent = (
-    <div className="flex h-full w-[473px] flex-col overflow-y-auto bg-emo-black text-slate-100 ring-1 ring-white/10 backdrop-blur-xl">
+    <div className="flex h-full w-[473px] flex-col overflow-y-auto bg-emo-black text-slate-100 ring-1 ring-white/10 backdrop-blur-xl border-r-2 border-emo-greytext">
       {" "}
       <nav
         className="sticky top-0 z-10 bg-emo-black px-1 text-sm font-medium 

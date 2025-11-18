@@ -40,11 +40,11 @@ const config: Config = {
           anxiety: "#65509E",
           energy: "#04BEAC",
 
-          envbeauty: "#EC4899",
-          envinteresting: "#8B5CF6",
-          envsafety: "#0EA5E9",
-          envcrowded: "#F97316",
-          environmentgreeness: "#22C55E",
+          envbeauty: "#CD3F32",
+          envinteresting: "#F8D130",
+          envsafety: "#0F29DB",
+          envcrowded: "#65509E",
+          environmentgreeness: "#04BEAC",
         },
       },
       boxShadow: {

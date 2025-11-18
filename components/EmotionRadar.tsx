@@ -80,7 +80,7 @@ export function EmotionRadar({
   // no data at all → show hex outline icon
   if (entries.length === 0) {
     return (
-      <div className="flex gap-2">
+      <div className="flex gap-4">
         <svg
           width="42"
           height="37"
