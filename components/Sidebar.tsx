@@ -88,7 +88,10 @@ export default function Sidebar(props: SidebarProps) {
   const sidebarContent = (
     <div className="flex h-full w-[473px] flex-col overflow-y-auto bg-emo-black text-slate-100 ring-1 ring-white/10 backdrop-blur-xl">
       {" "}
-      <nav className="sticky top-0 z-10 border-b border-emo-blacktext bg-emo-black px-1 pt-1 text-sm font-medium">
+      <nav
+        className="sticky top-0 z-10 bg-emo-black px-1 text-sm font-medium 
+                border-b-2 border-emo-greytext pt-2"
+      >
         <div className="flex w-full gap-1">
           {TABS.map((item) => {
             const isActive = tab === item.key;
@@ -98,11 +101,10 @@ export default function Sidebar(props: SidebarProps) {
                 key={item.key}
                 onClick={() => onTabChange(item.key)}
                 className={clsx(
-                  // even width, aligned bottoms
-                  "flex-1 text-center px-4 py-3 border-2 rounded-t-md transition",
+                  "flex-1 text-center px-4 py-3 border-x-2 border-t-2 rounded-t-md transition",
 
                   isActive
-                    ? "border-emo-greytext bg-emo-black text-white border-b-0 -mb-px"
+                    ? "border-emo-greytext bg-emo-black text-white border-b-0 -mb-[2px]"
                     : "border-emo-greytext text-emo-greytext hover:text-white"
                 )}
               >
