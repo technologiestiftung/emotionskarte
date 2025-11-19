@@ -74,7 +74,7 @@ export default function Legend({ metric }: LegendProps) {
                   return (
                     <div
                       key={step}
-                      className="rounded-full bg-slate-400/90"
+                      className="rounded-full bg-emo-greytext"
                       style={{ width: size, height: size }}
                     />
                   );

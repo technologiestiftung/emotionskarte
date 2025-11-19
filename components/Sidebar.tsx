@@ -33,6 +33,7 @@ export type SidebarProps = {
   filters: Filters;
   onFiltersChange: (filters: Filters) => void;
   hexData: RadarData;
+  metricDistribution: number[];
 };
 
 function mockDistribution(tab: MetricGroupKey): number[] {
@@ -57,14 +58,15 @@ export default function Sidebar(props: SidebarProps) {
     filters,
     onFiltersChange,
     hexData,
+    metricDistribution,
   } = props;
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const [distribution, setDistribution] = useState(() => mockDistribution(tab));
+  // const [distribution, setDistribution] = useState(() => mockDistribution(tab));
 
-  useEffect(() => {
-    setDistribution(mockDistribution(tab));
-  }, [tab]);
+  // useEffect(() => {
+  //   setDistribution(metricDistribution);
+  // }, [metricDistribution]);
 
   useEffect(() => {
     if (tab === "daten") {
@@ -117,7 +119,7 @@ export default function Sidebar(props: SidebarProps) {
       <div className="flex-1  px-6 pb-10 pt-6">
         {tab !== "daten" && (
           <div className="flex min-h-full flex-col gap-7">
-            <header className="border-b border-white/5 pb-6">
+            <header className="border-b-2 border-emo-greytext pb-6">
               <h2 className="mt-3 font-display text-2xl font-semibold leading-tight">
                 Wo ist Berlin{" "}
                 <span className={metricClass(metric, "text")}>
@@ -202,19 +204,28 @@ export default function Sidebar(props: SidebarProps) {
                 </div>
               </div>
             </section>
+            <section className="space-y-2">
+              {/* ORTE */}
+              <header>
+                <h3 className="text-xl font-semibold text-slate-100 pb-2">
+                  Verteilung in Berlin
+                </h3>
+              </header>
 
-            {/* <EmotionBars
-              tab={tab}
-              range={[filters.minValue, filters.maxValue]}
-              onRangeChange={([minValue, maxValue]) =>
-                updateFilter({
-                  minValue: Math.min(minValue, maxValue),
-                  maxValue: Math.max(maxValue, minValue),
-                })
-              }
-              metric={metric}
-            /> */}
-
+              <div className="">
+                <EmotionBars
+                  range={[filters.minValue, filters.maxValue]}
+                  onRangeChange={([minValue, maxValue]) =>
+                    updateFilter({
+                      minValue: Math.min(minValue, maxValue),
+                      maxValue: Math.max(maxValue, minValue),
+                    })
+                  }
+                  metric={metric}
+                  metricDistribution={metricDistribution}
+                />
+              </div>
+            </section>
             {/* <section className="space-y-5 rounded-3xl border border-white/5 bg-slate-900/30 p-5">
               <div className="space-y-2">
                 <h3 className="text-sm font-semibold uppercase tracking-[0.3em] text-slate-300">

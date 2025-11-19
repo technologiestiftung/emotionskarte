@@ -296,33 +296,30 @@ export default function IntroModal(props: ModalProps) {
                 {Array.from({ length: 9 }).map((_, index) => (
                   <div
                     key={index}
-                    className="flex h-12 w-32 items-center justify-center rounded border border-dashed border-slate-500/60 bg-black/40 text-[10px] uppercase tracking-[0.25em] text-slate-400"
+                    className="flex h-12 w-32 items-center justify-center  bg-black/40 text-[10px] uppercase tracking-[0.25em] "
                   >
-                    Logo
+                    LOGO
                   </div>
                 ))}
               </div>
             </div>
-
-            {/* Bottom links (desktop under whole right column) */}
-            <div className="mt-6 flex items-center justify-between text-[11px] text-slate-400">
-              <span>© Deine Emotionale Stadt · Berlin</span>
-              <div className="flex flex-wrap gap-4">
-                <a
-                  href="#impressum"
-                  className="underline-offset-2 hover:underline"
-                >
-                  Impressum
-                </a>
-                <a
-                  href="#datenschutz"
-                  className="underline-offset-2 hover:underline"
-                >
-                  Datenschutz
-                </a>
-              </div>
-            </div>
           </section>
+        </div>
+
+        {/* Bottom links (desktop under whole right column) */}
+        <div className="mt-6 flex items-center justify-between text-[11px] border-t-2 w-full p-4">
+          <span>© Deine Emotionale Stadt · Berlin</span>
+          <div className="flex flex-wrap gap-4">
+            <a href="#impressum" className="underline-offset-2 hover:underline">
+              Impressum
+            </a>
+            <a
+              href="#datenschutz"
+              className="underline-offset-2 hover:underline"
+            >
+              Datenschutz
+            </a>
+          </div>
         </div>
       </div>
     </div>

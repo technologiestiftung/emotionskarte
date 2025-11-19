@@ -68,3 +68,26 @@ button {
   right: 0.5rem;
   border-radius: 0.375rem;
 }
+
+/* Base: the input itself should not steal clicks */
+.range-thumb {
+  pointer-events: none;
+}
+
+/* WebKit browsers (Chrome, Edge, Safari) */
+.range-thumb::-webkit-slider-thumb {
+  pointer-events: auto;
+}
+
+/* Firefox */
+.range-thumb::-moz-range-thumb {
+  pointer-events: auto;
+}
+
+/* (Optional) if you also style the track: don’t re-enable pointer events there */
+.range-thumb::-webkit-slider-runnable-track {
+  pointer-events: none;
+}
+.range-thumb::-moz-range-track {
+  pointer-events: none;
+}

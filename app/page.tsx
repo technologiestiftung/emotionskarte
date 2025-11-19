@@ -47,6 +47,7 @@ export default function HomePage() {
   const [hexId, setHexId] = useState<string | null>(null);
   const [hexData, setHexData] = useState<RadarData>({});
   const [modalVisible, setModalVisible] = useState(false);
+  const [metricDistribution, setMetricDistribution] = useState([]);
 
   useEffect(() => {
     setLoading(true);
@@ -67,6 +68,36 @@ export default function HomePage() {
   useEffect(() => {
     setMetric((current) => ensureMetricForTab(current, tab));
   }, [tab]);
+
+  useEffect(() => {
+    if (!rawData || !metric) return;
+
+    // counter array for values 1..5
+    const result = [0, 0, 0, 0, 0];
+
+    Object.values(rawData).forEach((entry) => {
+      // check if places[0] exists
+      const place = places[0];
+      if (!entry[place]) return;
+
+      console.log("Ö");
+
+      // get the metric value
+      const value = entry[place]?.metrics?.[metric];
+      if (!value) return;
+
+      // round to nearest integer (1–5)
+      const rounded = Math.round(value);
+
+      // count n times this entry
+      if (rounded >= 1 && rounded <= 5) {
+        result[rounded - 1] += entry.n ?? 1;
+      }
+    });
+
+    console.log(result); // example: [30, 50, 25, 70, 40]
+    setMetricDistribution(result); // if you store it in state
+  }, [metric, places, rawData]);
 
   const safePlaces = useMemo(() => ensurePlaces(places), [places]);
 
@@ -139,6 +170,7 @@ export default function HomePage() {
           filters={filters}
           onFiltersChange={setFilters}
           hexData={hexData}
+          metricDistribution={metricDistribution}
         />
 
         <div className="relative flex-1">
