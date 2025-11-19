@@ -193,7 +193,7 @@ export default function Sidebar(props: SidebarProps) {
                           "flex items-center justify-center gap-2 px-3 py-2 font-medium transition",
                           index !== 0 && "border-l border-white/25",
                           active
-                            ? metricClass(metric, "bg") + " text-black"
+                            ? metricClass(metric, "bg", true)
                             : "bg-transparent text-slate-100 hover:bg-white/10"
                         )}
                       >
