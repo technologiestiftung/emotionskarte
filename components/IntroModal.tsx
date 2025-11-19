@@ -37,7 +37,7 @@ export default function IntroModal(props: ModalProps) {
       {/* Outer frame */}
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative mx-4 my-8 w-full max-w-5xl border rounded-sm border-emo-greytext bg-emo-black text-slate-100"
+        className="relative mx-4 my-8 w-full max-w-5xl border rounded-sm border-emo-grey bg-emo-black text-slate-100"
       >
         {/* Close button */}
         <button

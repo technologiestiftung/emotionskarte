@@ -22,5 +22,5 @@ export function metricClass(
   textColor?: boolean
 ) {
   const key = metric.toLocaleLowerCase(); // or .toLowerCase()
-  return `${prefix}-emo-${key} ${textColor ?? getTextColor(key)}`;
+  return `${prefix}-emo-${key} ${textColor ? getTextColor(key) : ""}`;
 }

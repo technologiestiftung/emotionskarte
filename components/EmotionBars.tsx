@@ -193,7 +193,7 @@ export function EmotionBars({
           <div className="absolute inset-y-3 rounded-full bg-slate-800/70" />
           {/* selected range fill */}
           <div
-            className="absolute inset-y-3 rounded-full bg-emo-greytext"
+            className="absolute inset-y-3 rounded-full bg-emo-grey"
             style={{ left: `${selLeft}%`, right: `${selRight}%` }}
           />
           {/* low thumb */}

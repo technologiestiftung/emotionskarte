@@ -32,7 +32,7 @@ const config: Config = {
         emo: {
           black: "#09090B",
           blacktext: "#2F2E38",
-          greytext: "#928FA3",
+          grey: "#928FA3",
 
           stress: "#CD3F32",
           happy: "#F8D130",

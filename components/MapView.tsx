@@ -519,7 +519,7 @@ export default function MapView({
       .setLngLat(event.lngLat)
       .setHTML(
         `
-        <div class=" max-w-[calc(100vw-3rem)] text-sm bg-emo-black p-3 rounded-md border-2 border-emo-greytext break-words">
+        <div class=" max-w-[calc(100vw-3rem)] text-sm bg-emo-black p-3 rounded-md border-2 border-emo-grey break-words">
           <h3 class="text-base font-semibold">Werte in diesem Hexagon</h3>
           <p class="mt-1 text-lg ${metricClass(currentMetric, "text")}" >
           Durchschnittswert für ${METRIC_LABELS[currentMetric]}: ${
@@ -537,7 +537,7 @@ export default function MapView({
     <div className="relative h-full w-full">
       <div ref={containerRef} className="absolute inset-0 h-full" />
       <div className="pointer-events-none absolute top-3 right-3 z-20">
-        <div className="pointer-events-auto flex flex-col overflow-hidden rounded-md border border-emo-greytext bg-emo-black">
+        <div className="pointer-events-auto flex flex-col overflow-hidden rounded-md border border-emo-grey bg-emo-black">
           {/* Zoom in */}
           <button
             type="button"
