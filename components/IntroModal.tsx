@@ -153,7 +153,7 @@ export default function IntroModal(props: ModalProps) {
                     key={index}
                     className="flex h-12 w-32 items-center justify-center text-[10px] uppercase tracking-[0.25em] "
                   >
-                    <Icon name={name} className={"w-20 h-20"} />
+                    <Icon name={name} raw className={"w-34 h-34"} />
                   </div>
                 ))}
               </div>
