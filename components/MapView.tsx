@@ -105,10 +105,6 @@ const CIRCLE_RADIUS_EXPRESSION = [
   ],
 ];
 
-/**
- * Build a color expression based on the current metric.
- * This uses COLOR_RAMP[metric] instead of a hardcoded key.
- */
 // @ts-ignore – MapLibre expression typings don't allow null but runtime does.
 function createColorExpression(
   metric: Metric
@@ -139,13 +135,6 @@ type MapViewProps = {
   setHexId: (hexId: string | null) => void;
 };
 
-type TooltipState = {
-  hexId: string;
-  x: number;
-  y: number;
-  info: HexAggregated;
-};
-
 export default function MapView({
   mapData,
   metric,
@@ -157,14 +146,12 @@ export default function MapView({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const popupRef = useRef<maplibregl.Popup | null>(null);
-  const hoverTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const dataRef = useRef(mapData);
   const metricRef = useRef<Metric>(metric);
   const selectedHexIdRef = useRef<string | null>(null);
 
   const [mapLoaded, setMapLoaded] = useState(false);
-  const [tooltip, setTooltip] = useState<TooltipState | null>(null);
   const [tileError, setTileError] = useState<string | null>(null);
 
   // keep refs in sync with latest props
@@ -409,51 +396,14 @@ export default function MapView({
   const setupInteractions = (map: MapLibreMap) => {
     const layers: Array<"h3-fill"> = ["h3-fill"];
     layers.forEach((layerId) => {
-      map.on("mousemove", layerId, (event) => handleHover(event));
       map.on("mouseenter", layerId, () => {
         map.getCanvas().style.cursor = "pointer";
       });
       map.on("mouseleave", layerId, () => {
-        handleMouseLeave();
         map.getCanvas().style.cursor = "";
       });
       map.on("click", layerId, (event) => handleClick(event));
     });
-  };
-
-  // @ts-ignore
-  const handleHover = (event: MapMouseEvent & maplibregl.EventData) => {
-    if (hoverTimeout.current) {
-      window.clearTimeout(hoverTimeout.current);
-    }
-    // @ts-ignore
-    hoverTimeout.current = window.setTimeout(() => {
-      const features = event.features ?? [];
-      const feature = features[0];
-      if (!feature?.id) {
-        setTooltip(null);
-        return;
-      }
-      const hexId = String(feature.id);
-      const info = dataRef.current[hexId];
-      if (!info) {
-        setTooltip(null);
-        return;
-      }
-      setTooltip({
-        hexId,
-        x: event.point.x,
-        y: event.point.y,
-        info,
-      });
-    }, 150);
-  };
-
-  const handleMouseLeave = () => {
-    if (hoverTimeout.current) {
-      window.clearTimeout(hoverTimeout.current);
-    }
-    setTooltip(null);
   };
 
   // @ts-ignore
@@ -571,30 +521,6 @@ export default function MapView({
           <div className="rounded-3xl border border-red-500/40 bg-emo-textblack/90 px-6 py-4 text-sm text-red-300 shadow-glow">
             {error ?? tileError}
           </div>
-        </div>
-      )}
-      {tooltip && (
-        <div
-          className={clsx(
-            "pointer-events-none absolute z-[1000] w-60 rounded-3xl border border-white/10 bg-emo-black p-4 text-xs text-slate-100 shadow-glow backdrop-blur"
-          )}
-          style={{ left: tooltip.x + 12, top: tooltip.y + 12 }}
-        >
-          <p className="text-[11px] uppercase tracking-[0.35em] text-primary-100">
-            {metric}
-          </p>
-          <p className="mt-2 text-sm font-semibold">Hex {tooltip.hexId}</p>
-          <p className="mt-1 text-xs text-slate-300">
-            Durchschnitt:{" "}
-            {tooltip.info.value != null ? tooltip.info.value.toFixed(2) : "n/a"}
-          </p>
-          <p className="text-xs text-slate-300">
-            Einträge: {tooltip.info.hasData ? tooltip.info.n : "n/a"}
-          </p>
-          <p className="mt-3 text-[11px] uppercase tracking-[0.35em] text-slate-500">
-            Aktive Orte
-          </p>
-          <p className="text-xs text-slate-200">{activePlacesLabel}</p>
         </div>
       )}
     </div>
