@@ -51,7 +51,7 @@ export default function IntroModal(props: ModalProps) {
       {/* Outer frame */}
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative mx-4 my-8 w-full max-w-5xl border rounded-sm border-emo-grey bg-emo-black text-slate-100"
+        className="relative mx-4 my-8 w-full max-w-5xl max-h-[90vh] overflow-y-auto border rounded-sm border-emo-grey bg-emo-black text-slate-100"
       >
         {/* Close button */}
         <button
@@ -63,14 +63,14 @@ export default function IntroModal(props: ModalProps) {
         </button>
 
         {/* Inner content */}
-        <div className="grid gap-10 px-8 py-10 md:grid-cols-[260px,minmax(0,1fr)]">
+        <div className="grid gap-10 px-8 py-10 md:grid-cols-[100px,minmax(0,1fr)]">
           {/* LEFT COLUMN – logo + small footer */}
           <aside className="flex flex-col justify-between pb-8 md:pb-0">
             {/* Big logo placeholder */}
             <div className="flex items-start">
               <div className="flex h-64 w-full items-center justify-center rounded ">
-                <span className="text-xs uppercase tracking-[0.35em] text-slate-400">
-                  <Icon name={"emocity"} className={"w-20 h-20 text-white"} />
+                <span className="text-xs uppercase tracking-[0.35em]">
+                  <Icon name={"emocity"} className={"w-40 h-40 text-white"} />
                 </span>
               </div>
             </div>
@@ -146,14 +146,14 @@ export default function IntroModal(props: ModalProps) {
             </div>
 
             {/* Logos row */}
-            <div className="mt-10 border-t border-slate-700/60 pt-6">
+            <div className="mt-10 pt-6">
               <div className="flex flex-wrap items-center justify-center gap-4 md:justify-between">
                 {icons.map((name, index) => (
                   <div
                     key={index}
-                    className="flex h-12 w-32 items-center justify-center  bg-black/40 text-[10px] uppercase tracking-[0.25em] "
+                    className="flex h-12 w-32 items-center justify-center text-[10px] uppercase tracking-[0.25em] "
                   >
-                    <Icon name={name} className={"w-20 h-20 stroke-white"} />
+                    <Icon name={name} className={"w-20 h-20"} />
                   </div>
                 ))}
               </div>
@@ -161,21 +161,28 @@ export default function IntroModal(props: ModalProps) {
           </section>
         </div>
 
-        {/* Bottom links (desktop under whole right column) */}
-        <div className="mt-6 flex items-center justify-between text-[11px] border-t-2 w-full p-4">
-          <span>© Deine Emotionale Stadt · Berlin</span>
-          <div className="flex flex-wrap gap-4">
-            <a href="#impressum" className="underline-offset-2 hover:underline">
-              Impressum
-            </a>
-            <a
-              href="#datenschutz"
-              className="underline-offset-2 hover:underline"
-            >
-              Datenschutz
-            </a>
+        <div className="border-t border-slate-300 w-full mt-8"></div>
+
+        <section className="flex flex-col px-8 py-4 md:px-8 md:pt-4">
+          <div className="md:ml-[100px] text-sm text-slate-300">
+            {" "}
+            {/* or md:ml-[logoColumnWidth] */}
+            <div className="flex flex-wrap gap-4">
+              <a
+                href="https://www.technologiestiftung-berlin.de/impressum"
+                className="underline-offset-2 hover:underline"
+              >
+                Impressum
+              </a>
+              <a
+                href="https://www.technologiestiftung-berlin.de/datenschutz"
+                className="underline-offset-2 hover:underline"
+              >
+                Datenschutz
+              </a>
+            </div>
           </div>
-        </div>
+        </section>
       </div>
     </div>
   );
