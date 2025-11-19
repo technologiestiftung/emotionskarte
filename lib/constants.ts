@@ -21,7 +21,7 @@ export const PLACE_LABELS: Record<Place, string> = {
   oepnv: "ÖPNV",
 };
 
-export const DEFAULT_PLACE: Place = "total";
+export const DEFAULT_PLACE: Place = "drinnen";
 
 export const METRIC_LABELS: Record<Metric, string> = {
   Stress: "Stress",

@@ -21,7 +21,7 @@ const TABS: { key: MetricGroupKey; label: string }[] = [
 ];
 import Icon from "./Icon";
 
-const PLACE_OPTIONS: Place[] = ["total", "drinnen", "draussen", "oepnv"];
+const PLACE_OPTIONS: Place[] = ["drinnen", "draussen", "oepnv"];
 
 export type SidebarProps = {
   tab: MetricGroupKey;
