@@ -107,10 +107,10 @@ export function EmotionBars({
   return (
     <div className={clsx("w-full p-4", className)}>
       {/* ===== Chart ===== */}
-      <div className="w-full overflow-x-auto mb-1">
-        <svg viewBox="0 0 760 210" className="block w-full">
+      <div className="w-full overflow-visible mb-1">
+        <svg viewBox="0 0 760 210" className="block w-full overflow-visible">
           {/* y-axis label */}
-          <text x={10} y={6} fontSize="16" fill="rgb(203 213 225)">
+          <text x={10} y={0} fontSize="16" fill="rgb(203 213 225)">
             Abgegebene Stimmen
           </text>
 
@@ -184,7 +184,7 @@ export function EmotionBars({
           {/* x label */}
           <text
             x={740}
-            y={205}
+            y={215}
             fontSize="16"
             fill="rgb(203 213 225)"
             textAnchor="end"
