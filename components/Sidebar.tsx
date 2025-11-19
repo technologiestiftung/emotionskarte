@@ -391,7 +391,7 @@ function DataTabContent() {
           aggregiert und mit Feature States dynamisch in die Karte gespielt.
         </p>
       </section>
-      <section className="">
+      {/* <section className="">
         <h4 className="text-base font-semibold pb-2 ">Downloads</h4>
         <ul className="space-y-2  underline-offset-2">
           <li>
@@ -422,7 +422,7 @@ function DataTabContent() {
             </a>
           </li>
         </ul>
-      </section>
+      </section> */}
       <section className="">
         <h4 className="text-base font-semibold pb-2 ">Datenschutz</h4>
         <p>

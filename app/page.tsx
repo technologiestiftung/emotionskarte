@@ -47,7 +47,7 @@ export default function HomePage() {
   const [hexId, setHexId] = useState<string | null>(null);
   const [hexData, setHexData] = useState<RadarData>({});
   const [modalVisible, setModalVisible] = useState(false);
-  const [metricDistribution, setMetricDistribution] = useState([]);
+  const [metricDistribution, setMetricDistribution] = useState<number[]>([]);
 
   useEffect(() => {
     setLoading(true);
@@ -76,22 +76,18 @@ export default function HomePage() {
     const result = [0, 0, 0, 0, 0];
 
     Object.values(rawData).forEach((entry) => {
-      // check if places[0] exists
       const place = places[0];
-      if (!entry[place]) return;
+      const placeData = entry[place];
+      if (!placeData) return;
 
-      console.log("Ö");
-
-      // get the metric value
-      const value = entry[place]?.metrics?.[metric];
+      const value = placeData.metrics?.[metric];
       if (!value) return;
 
-      // round to nearest integer (1–5)
       const rounded = Math.round(value);
 
-      // count n times this entry
       if (rounded >= 1 && rounded <= 5) {
-        result[rounded - 1] += entry.n ?? 1;
+        const n = placeData.n ?? 1;
+        result[rounded - 1] += n;
       }
     });
 

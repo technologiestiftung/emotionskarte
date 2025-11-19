@@ -262,6 +262,7 @@ export default function MapView({
           paint: {
             "circle-color": "#ffffff",
             "circle-opacity": CIRCLE_OPACITY_EXPRESSION,
+            // @ts-ignore
             "circle-radius": CIRCLE_RADIUS_EXPRESSION,
             "circle-stroke-width": 0,
             "circle-stroke-color": "#0f172a",
@@ -334,7 +335,7 @@ export default function MapView({
       // click on empty map → close popup + clear selection
       map.on("click", (event) => {
         const features = map.queryRenderedFeatures(event.point, {
-          layers: ["h3-fill", "h3-centroids"],
+          layers: ["h3-fill"],
         });
         if (!features.length) {
           popupRef.current?.remove();
@@ -406,10 +407,7 @@ export default function MapView({
   }, [activePlaces]);
 
   const setupInteractions = (map: MapLibreMap) => {
-    const layers: Array<"h3-fill" | "h3-centroids"> = [
-      "h3-fill",
-      // "h3-centroids",
-    ];
+    const layers: Array<"h3-fill"> = ["h3-fill"];
     layers.forEach((layerId) => {
       map.on("mousemove", layerId, (event) => handleHover(event));
       map.on("mouseenter", layerId, () => {
@@ -578,7 +576,7 @@ export default function MapView({
       {tooltip && (
         <div
           className={clsx(
-            "pointer-events-none absolute z-20 w-60 rounded-3xl border border-white/10 bg-emo-black p-4 text-xs text-slate-100 shadow-glow backdrop-blur"
+            "pointer-events-none absolute z-[1000] w-60 rounded-3xl border border-white/10 bg-emo-black p-4 text-xs text-slate-100 shadow-glow backdrop-blur"
           )}
           style={{ left: tooltip.x + 12, top: tooltip.y + 12 }}
         >
