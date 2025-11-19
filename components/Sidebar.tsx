@@ -88,11 +88,11 @@ export default function Sidebar(props: SidebarProps) {
   const metricOptions = tab === "daten" ? [] : METRIC_GROUPS[tab];
 
   const sidebarContent = (
-    <div className="flex h-full w-[500px] flex-col overflow-y-auto bg-emo-black text-slate-100 ring-1 ring-white/10 backdrop-blur-xl border-r-2 border-emo-grey">
+    <div className="flex h-full w-[500px] flex-col overflow-y-auto bg-emo-black  backdrop-blur-xl border-r border-emo-grey">
       {" "}
       <nav
         className="sticky top-0 z-10 bg-emo-black px-1 text-sm font-medium 
-                border-b-2 border-emo-grey pt-2"
+                border-b border-emo-grey pt-2"
       >
         <div className="flex w-full gap-1">
           {TABS.map((item) => {
@@ -103,10 +103,10 @@ export default function Sidebar(props: SidebarProps) {
                 key={item.key}
                 onClick={() => onTabChange(item.key)}
                 className={clsx(
-                  "flex-1 text-center px-4 py-3 border-x-2 border-t-2 rounded-t-md transition",
+                  "flex-1 text-center px-4 py-3 border-x border-t rounded-t-md transition",
 
                   isActive
-                    ? "border-emo-grey bg-emo-black text-white border-b-0 -mb-[2px]"
+                    ? "border-emo-grey bg-emo-black text-white border-b-0 -mb-[1px]"
                     : "border-emo-grey text-emo-grey hover:text-white"
                 )}
               >
@@ -119,7 +119,7 @@ export default function Sidebar(props: SidebarProps) {
       <div className="flex-1  px-6 pb-10 pt-6">
         {tab !== "daten" && (
           <div className="flex min-h-full flex-col gap-7">
-            <header className="border-b-2 border-emo-grey pb-6">
+            <header className="border-b border-emo-grey pb-6">
               <h2 className="mt-3 font-display text-2xl font-semibold leading-tight">
                 Wo ist Berlin{" "}
                 <span className={metricClass(metric, "text")}>
@@ -278,7 +278,7 @@ export default function Sidebar(props: SidebarProps) {
               </div>
             </section>
 
-            <section className="mt-auto border-t border-white/5 pt-6">
+            <section className="mt-auto border-t border-emo-grey pt-6">
               <p className="text-xs text-emo-grey">
                 Der Datensatz umfasst den Zeitraum von Januar 2020 bis Dezember
                 2025. Die Karten-Visualisierung basiert auf den App-Daten mit

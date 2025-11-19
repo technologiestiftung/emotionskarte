@@ -71,29 +71,43 @@ export function EmotionBars({
     return () => cancelAnimationFrame(frameId);
   }, [metricDistribution]);
 
-  // slider helpers
+  // ===== Slider helpers =====
   const [minVal, maxValSlider] = range;
   const minAllowed = 1;
   const maxAllowed = 5;
   const step = 1;
 
-  // for the filled selection bar
-  const selLeft = useMemo(
-    () => ((minVal - minAllowed) / (maxAllowed - minAllowed)) * 100,
-    [minVal]
-  );
-  const selRight = useMemo(
-    () => (1 - (maxValSlider - minAllowed) / (maxAllowed - minAllowed)) * 100,
-    [maxValSlider]
-  );
+  // 1..5 → 4 steps between thumbs
+  const totalSteps = maxAllowed - minAllowed; // 4
 
-  // const tickRatios = [0, 0.25, 0.5, 0.75, 1];
+  const { selLeft, selRight } = useMemo(() => {
+    const isSingle = minVal === maxValSlider;
+
+    if (isSingle) {
+      // center a small segment around that single value
+      const pos = ((minVal - minAllowed) / totalSteps) * 100; // 0..100
+      const singleWidth = 100 / (totalSteps * 2); // narrow pill (e.g. 12.5%)
+      const half = singleWidth / 2;
+
+      const left = Math.max(0, pos - half);
+      const right = Math.max(0, 100 - (pos + half));
+
+      return { selLeft: left, selRight: right };
+    }
+
+    // normal range: from min thumb position to max thumb position
+    const left = ((minVal - minAllowed) / totalSteps) * 100;
+    const right = ((maxAllowed - maxValSlider) / totalSteps) * 100;
+
+    return { selLeft: left, selRight: right };
+  }, [minVal, maxValSlider, totalSteps]);
+
   const tickRatios = [0.1, 0.5, 1];
 
   return (
     <div className={clsx("w-full p-4", className)}>
       {/* ===== Chart ===== */}
-      <div className="w-full overflow-x-auto mb-2">
+      <div className="w-full overflow-x-auto mb-1">
         <svg viewBox="0 0 760 210" className="block w-full">
           {/* y-axis label */}
           <text x={10} y={6} fontSize="16" fill="rgb(203 213 225)">
@@ -106,13 +120,6 @@ export function EmotionBars({
             const value = Math.round(r * animatedMax);
             return (
               <g key={r}>
-                {/* <line
-                  x1={64}
-                  y1={y}
-                  x2={740}
-                  y2={y}
-                  stroke="rgba(255,255,255,0.08)"
-                /> */}
                 <text
                   x={56}
                   y={y + 4}
@@ -139,7 +146,15 @@ export function EmotionBars({
               <g
                 key={i}
                 opacity={faded ? 0.25 : 1}
-                className="transition-opacity duration-300"
+                className="transition-opacity duration-300 cursor-pointer"
+                // onClick={() => onRangeChange([bin, bin])}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    onRangeChange([bin, bin]);
+                  }
+                }}
               >
                 <rect
                   x={x}
@@ -176,27 +191,19 @@ export function EmotionBars({
           >
             Intensität der Emotion
           </text>
-
-          <defs>
-            <linearGradient id="grad" x1="0" x2="0" y1="0" y2="1">
-              <stop offset="0%" stopColor="#0d9488" />
-              <stop offset="100%" stopColor="#99f6e4" />
-            </linearGradient>
-          </defs>
         </svg>
       </div>
 
-      {/* ===== Inline range slider (dual thumb) ===== */}
-      <div className="mt-3">
-        <div className="relative h-8">
-          {/* track */}
-          <div className="absolute inset-y-3 rounded-full bg-slate-800/70" />
-          {/* selected range fill */}
+      {/* ===== Inline range slider (directly under chart) ===== */}
+      {/* <div className="mt-1">
+        <div className="relative h-8 w-full">
+          <div className="absolute inset-y-3 w-full rounded-full bg-slate-800/70" />
+
           <div
             className="absolute inset-y-3 rounded-full bg-emo-grey"
             style={{ left: `${selLeft}%`, right: `${selRight}%` }}
           />
-          {/* low thumb */}
+
           <input
             aria-label="Minimale Intensität"
             type="range"
@@ -225,7 +232,7 @@ export function EmotionBars({
             className="range-thumb absolute inset-0 w-full appearance-none bg-transparent"
           />
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

@@ -17,7 +17,7 @@ export default function Legend({ metric }: LegendProps) {
         className="
       pointer-events-auto
       w-[300px]
-      rounded-md border-2 border-emo-grey
+      rounded-md border border-emo-grey
       bg-emo-black
       p-4
       text-xs 

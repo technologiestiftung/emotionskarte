@@ -517,7 +517,7 @@ export default function MapView({
       .setLngLat(event.lngLat)
       .setHTML(
         `
-        <div class=" max-w-[calc(100vw-3rem)] text-sm bg-emo-black p-3 rounded-md border-2 border-emo-grey break-words">
+        <div class=" max-w-[calc(100vw-3rem)] text-sm bg-emo-black p-3 rounded-md border border-emo-grey break-words">
           <h3 class="text-base font-semibold">Werte in diesem Hexagon</h3>
           <p class="mt-1 text-lg ${metricClass(currentMetric, "text")}" >
           Durchschnittswert für ${METRIC_LABELS[currentMetric]}: ${
