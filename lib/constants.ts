@@ -123,3 +123,5 @@ export const BERLIN_BOUNDS: maplibregl.LngLatBoundsLike = [
   [11.59835, 51.43826], // expanded south-west (~100 km buffer)
   [15.25116, 53.57551], // expanded north-east (~100 km buffer)
 ];
+
+export const SIDEBAR_WIDTH: number = 500;

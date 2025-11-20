@@ -20,10 +20,13 @@ import {
   PMTILES_ARCHIVE,
   PMTILES_ARCHIVE_PATH,
   BERLIN_BOUNDS,
+  SIDEBAR_WIDTH,
 } from "../lib/constants";
 import type { HexAggregated, Metric, Place } from "../lib/types";
 import { METRIC_LABELS } from "../lib/constants";
 import { metricClass } from "../lib/utils";
+
+import { useIsDesktopMdUp } from "../hooks/useIsDesktopMdUp";
 
 let featureStateWarningShown = false;
 let protocol: Protocol | null = null;
@@ -154,6 +157,8 @@ export default function MapView({
   const [mapLoaded, setMapLoaded] = useState(false);
   const [tileError, setTileError] = useState<string | null>(null);
 
+  const isDesktop = useIsDesktopMdUp();
+
   // keep refs in sync with latest props
   dataRef.current = mapData;
   metricRef.current = metric;
@@ -196,6 +201,22 @@ export default function MapView({
   }
 
   useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !mapLoaded) return;
+
+    // assuming SIDEBAR_WIDTH is in px as a number
+    map.setPadding({
+      left: isDesktop ? SIDEBAR_WIDTH : 0,
+      right: 0,
+      top: 0,
+      bottom: 0,
+    });
+
+    // optional: re-render to respect new padding
+    map.resize();
+  }, [isDesktop, mapLoaded]);
+
+  useEffect(() => {
     if (!containerRef.current || mapRef.current) {
       return;
     }
@@ -208,7 +229,7 @@ export default function MapView({
       maxBounds: BERLIN_BOUNDS,
       zoom: MAP_INITIAL_VIEW.zoom,
       attributionControl: false,
-      hash: true,
+      // hash: true,
     });
 
     mapRef.current = map;

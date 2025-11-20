@@ -7,6 +7,7 @@ import {
   METRIC_LABELS,
   METRIC_LABELS_VERBS,
   PLACE_LABELS,
+  SIDEBAR_WIDTH,
 } from "../lib/constants";
 import { metricClass } from "../lib/utils";
 import type { Filters } from "../lib/aggregation";
@@ -88,7 +89,9 @@ export default function Sidebar(props: SidebarProps) {
   const metricOptions = tab === "daten" ? [] : METRIC_GROUPS[tab];
 
   const sidebarContent = (
-    <div className="flex h-full w-[500px] flex-col overflow-y-auto bg-emo-black  backdrop-blur-xl border-r border-emo-grey">
+    <div
+      className={`flex h-full w-[${SIDEBAR_WIDTH}px] flex-col overflow-y-auto bg-emo-black  backdrop-blur-xl border-r border-emo-grey`}
+    >
       {" "}
       <nav
         className="sticky top-0 z-10 bg-emo-black px-1 text-sm font-medium 
