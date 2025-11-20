@@ -303,19 +303,19 @@ export default function MapView({
               "case",
               ["boolean", ["feature-state", "selected"], false],
               "#F4F4F6", // thicker when selected
-              "#222", // default outline
+              "#928FA3", // default outline
             ],
             "line-opacity": [
               "case",
               ["boolean", ["feature-state", "selected"], false],
               0.8, // thicker when selected
-              0.1, // default outline
+              0.4, // default outline
             ],
             "line-width": [
               "case",
               ["boolean", ["feature-state", "selected"], false],
               3, // thicker when selected
-              0.5, // default outline
+              0.1, // default outline
             ],
           },
         });
