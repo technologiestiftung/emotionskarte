@@ -287,7 +287,7 @@ export default function MapView({
           paint: {
             // use the current metric for the initial color expression
             "fill-color": createColorExpression(metricRef.current),
-            "fill-opacity": 0.4,
+            "fill-opacity": 0.6,
           },
         });
       }
