@@ -439,7 +439,7 @@ export default function MapView({
     setHexId(hexId);
 
     const info = dataRef.current[hexId];
-    if (!info) {
+    if (!info || info?.value === null) {
       return;
     }
 

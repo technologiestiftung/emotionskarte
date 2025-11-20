@@ -32,7 +32,7 @@ export const METRIC_LABELS: Record<Metric, string> = {
   EnvBeauty: "Schönheit",
   EnvInteresting: "Interessant",
   EnvSafety: "Sicherheit",
-  EnvCrowded: "Voll",
+  EnvCrowded: "Andrang",
   EnvironmentGreeness: "Grün",
 };
 
