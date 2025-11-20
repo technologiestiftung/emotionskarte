@@ -131,7 +131,8 @@ export default function Sidebar(props: SidebarProps) {
                 ?
               </h2>
               <p className="mt-2 text-sm text-slate-300">
-                Verteilung der Emotion{" "}
+                Verteilung der{" "}
+                {tab === "emotionen" ? "Emotion" : "Umweltwahrnehmung"}{" "}
                 <span className="italic">{METRIC_LABELS[metric]}</span> in
                 Berlin.
               </p>
@@ -179,7 +180,7 @@ export default function Sidebar(props: SidebarProps) {
             <section className="space-y-2">
               <header>
                 <h3 className="text-xl font-semibold text-slate-100 pb-2">
-                  Emotionen
+                  {tab === "emotionen" ? "Emotionen" : "Umweltwahrnehmung"}
                 </h3>
               </header>
 

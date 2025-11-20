@@ -109,16 +109,15 @@ export default function IntroModal(props: ModalProps) {
                     Die Karte visualisiert die Emotionsempfindungen der
                     Berliner:innen. In der linken Seitenleiste können
                     Nutzer:innen zwischen den fünf Emotionen – Angst, Stress,
-                    Einsamkeit, Vitalität und Freude – wählen. Zusätzlich
-                    besteht die Möglichkeit, verschiedene Umgebungen
-                    auszuwählen, in denen die Teilnehmer:innen befragt wurden:
-                    Drinnen, draußen oder im öffentlichen Nahverkehr (ÖPNV).
-                    Durch das Auswählen einzelner Balken lassen sich die Werte
-                    von 1 bis 5 für jede Emotion entweder einzeln oder in
-                    Kombination anzeigen. Die Visualisierung der
-                    Umweltwahrnehmung kann in einem separaten Tab nach derselben
-                    Logik erkundet werden. Bei Interesse besteht die
-                    Möglichkeit, die Daten herunterzuladen.
+                    Einsamkeit, Energie und Freude – wählen. Zusätzlich besteht
+                    die Möglichkeit, verschiedene Umgebungen auszuwählen, in
+                    denen die Teilnehmer:innen befragt wurden: Drinnen, draußen
+                    oder im öffentlichen Nahverkehr (ÖPNV). Durch das Auswählen
+                    einzelner Balken lassen sich die Werte von 1 bis 5 für jede
+                    Emotion entweder einzeln oder in Kombination anzeigen. Die
+                    Visualisierung der Umweltwahrnehmung kann in einem separaten
+                    Tab nach derselben Logik erkundet werden. Bei Interesse
+                    besteht die Möglichkeit, die Daten herunterzuladen.
                   </p>
                 </div>
 
