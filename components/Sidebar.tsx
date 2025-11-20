@@ -90,7 +90,7 @@ export default function Sidebar(props: SidebarProps) {
 
   const sidebarContent = (
     <div
-      className={`flex h-full w-[${SIDEBAR_WIDTH}px] flex-col overflow-y-auto bg-emo-black  backdrop-blur-xl border-r border-emo-grey`}
+      className={`flex h-full w-[500px] flex-col overflow-y-auto bg-emo-black  backdrop-blur-xl border-r border-emo-grey`}
     >
       {" "}
       <nav
