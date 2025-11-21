@@ -24,13 +24,13 @@ export default function createBaseMapStyle() {
           "background-color": "#000",
         },
       },
-      {
-        id: "osm",
-        type: "raster" as const,
-        source: "osm",
-        minzoom: 0,
-        maxzoom: 19,
-      },
+      // {
+      //   id: "osm",
+      //   type: "raster" as const,
+      //   source: "osm",
+      //   minzoom: 0,
+      //   maxzoom: 19,
+      // },
     ],
   };
 }

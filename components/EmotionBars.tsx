@@ -72,13 +72,9 @@ export function EmotionBars({
   }, [metricDistribution]);
 
   // ===== Range + slider mapping =====
-  // Filter domain (what the rest of the app uses)
-  // 0 means “no lower bound”, 1..5 are the actual bins.
   const FILTER_MIN = 0;
   const FILTER_MAX = 5;
 
-  // Slider domain (visual)
-  // Thumbs sit on borders between bins: 0 | 1 | 2 | 3 | 4 | 5
   const SLIDER_MIN = 0;
   const SLIDER_MAX = 5;
   const STEP = 1;
@@ -89,16 +85,13 @@ export function EmotionBars({
 
   // Map filter range -> slider range
   function toSliderRange([min, max]: [number, number]): [number, number] {
-    // Single selected bin [k,k] -> show [k-1, k]
     if (min === max) {
       const val = min;
-      if (val > SLIDER_MIN) return [val - 1, val]; // e.g. [2,2] -> [1,2]
+      if (val > SLIDER_MIN) return [val - 1, val];
       if (val < SLIDER_MAX) return [val, val + 1];
-      return [val - 1, val]; // fallback
+      return [val - 1, val];
     }
 
-    // Multi-bin range: filter [0,5] -> slider [0,5],
-    // filter [2,5] -> slider [1,5], filter [3,4] -> slider [2,4], etc.
     if (min <= FILTER_MIN) {
       return [SLIDER_MIN, max];
     }
@@ -108,17 +101,15 @@ export function EmotionBars({
 
   // Map slider range -> filter range
   function fromSliderRange([s, t]: [number, number]): [number, number] {
-    // If slider has width 1, treat it as a single bin (take right edge)
     if (t - s === 1) {
       const val = t;
       const clamped = Math.max(1, Math.min(FILTER_MAX, val));
       return [clamped, clamped];
     }
 
-    // Multi-bin range: bins included are (s, t] => min = s+1 (or 0 if s==0), max = t
     let min: number;
     if (s <= SLIDER_MIN) {
-      min = FILTER_MIN; // 0: "no lower bound"
+      min = FILTER_MIN;
     } else {
       min = s + 1;
     }
@@ -152,21 +143,40 @@ export function EmotionBars({
   return (
     <div className={clsx("w-full p-4", className)}>
       {/* ===== Chart ===== */}
-      <div className="w-full overflow-visible mb-1">
+      <div className="w-full overflow-visible mb-0">
         <svg viewBox="0 0 760 210" className="block w-full overflow-visible">
           {/* y-axis label */}
           <text x={10} y={0} fontSize="16" fill="rgb(203 213 225)">
             Abgegebene Stimmen
           </text>
 
-          {/* grid using animatedMax */}
+          {/* y-axis line */}
+          <line
+            x1={56}
+            y1={30}
+            x2={56}
+            y2={170}
+            stroke="rgb(148 163 184)"
+            strokeWidth={2}
+          />
+
+          {/* y-axis ticks + labels using animatedMax */}
           {tickRatios.map((r) => {
             const y = 170 - r * 140;
             const value = Math.round(r * animatedMax);
             return (
               <g key={r}>
+                {/* tick line */}
+                <line
+                  x1={56}
+                  y1={y}
+                  x2={64}
+                  y2={y}
+                  stroke="rgb(148 163 184)"
+                  strokeWidth={1.5}
+                />
                 <text
-                  x={56}
+                  x={52}
                   y={y + 4}
                   textAnchor="end"
                   fontSize="18"
@@ -194,9 +204,7 @@ export function EmotionBars({
                 key={i}
                 opacity={faded ? 0.25 : 1}
                 className="transition-opacity duration-300 cursor-pointer"
-                // Hover sets a single-bin filter range like [bin, bin]
                 onMouseOver={() => onRangeChange([bin, bin])}
-                // Mouse-out resets to full visible range
                 onMouseOut={() => onRangeChange([FILTER_MIN, FILTER_MAX])}
                 role="button"
                 tabIndex={0}
@@ -215,7 +223,7 @@ export function EmotionBars({
                 </rect>
                 <text
                   x={x + 64}
-                  y={190}
+                  y={210}
                   textAnchor="middle"
                   fontSize="16"
                   fill="rgb(203 213 225)"
@@ -229,7 +237,7 @@ export function EmotionBars({
           {/* x label */}
           <text
             x={740}
-            y={215}
+            y={235}
             fontSize="16"
             fill="rgb(203 213 225)"
             textAnchor="end"
@@ -237,12 +245,15 @@ export function EmotionBars({
             Intensität der Emotion
           </text>
         </svg>
+
         {/* ===== Inline range slider (directly under chart) ===== */}
-        <div className="mt-1 ml-6">
-          <div className="relative h-8 w-full">
-            <div className="absolute inset-y-3 w-full rounded-full bg-slate-800/70" />
+        <div className="mt-0 ml-6 relative -top-[30px]">
+          <div className="relative h-6 w-full">
+            {/* track */}
+            <div className="absolute top-1/2 h-1.5 w-full -translate-y-1/4 transform rounded-full bg-slate-800/70" />
+            {/* selected range */}
             <div
-              className="absolute inset-y-3 rounded-full bg-emo-grey"
+              className="absolute top-1/2 h-1.5 -translate-y-1/4 transform rounded-full bg-emo-grey"
               style={{ left: `${selLeft}%`, right: `${selRight}%` }}
             />
 
@@ -256,7 +267,6 @@ export function EmotionBars({
               value={sliderMinVal}
               onChange={(e) => {
                 const raw = Number(e.target.value);
-                // Enforce gap on slider: min <= max - MIN_GAP
                 const nextSliderMin = Math.min(raw, sliderMaxVal - MIN_GAP);
 
                 const [nextFilterMin, nextFilterMax] = fromSliderRange([
@@ -279,7 +289,6 @@ export function EmotionBars({
               value={sliderMaxVal}
               onChange={(e) => {
                 const raw = Number(e.target.value);
-                // Enforce gap on slider: max >= min + MIN_GAP
                 const nextSliderMax = Math.max(raw, sliderMinVal + MIN_GAP);
 
                 const [nextFilterMin, nextFilterMax] = fromSliderRange([
