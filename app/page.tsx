@@ -28,7 +28,7 @@ import type {
 } from "../lib/types";
 
 const DEFAULT_FILTERS: Filters = {
-  minValue: 1,
+  minValue: 0,
   maxValue: 5,
   minParticipants: 1,
   hideNoData: false,

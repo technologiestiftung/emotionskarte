@@ -5,7 +5,7 @@ import clsx from "clsx";
 import { COLOR_RAMP } from "../lib/constants";
 
 export type EmotionBarsProps = {
-  /** controlled filter range (1..5) */
+  /** controlled filter range (0..5), with a minimum gap of 1 in filter space */
   range: [number, number];
   onRangeChange: (next: [number, number]) => void;
   className?: string;
@@ -71,36 +71,81 @@ export function EmotionBars({
     return () => cancelAnimationFrame(frameId);
   }, [metricDistribution]);
 
-  // ===== Slider helpers =====
-  const [minVal, maxValSlider] = range;
-  const minAllowed = 1;
-  const maxAllowed = 5;
-  const step = 1;
+  // ===== Range + slider mapping =====
+  // Filter domain (what the rest of the app uses)
+  // 0 means “no lower bound”, 1..5 are the actual bins.
+  const FILTER_MIN = 0;
+  const FILTER_MAX = 5;
 
-  // 1..5 → 4 steps between thumbs
-  const totalSteps = maxAllowed - minAllowed; // 4
+  // Slider domain (visual)
+  // Thumbs sit on borders between bins: 0 | 1 | 2 | 3 | 4 | 5
+  const SLIDER_MIN = 0;
+  const SLIDER_MAX = 5;
+  const STEP = 1;
+  const MIN_GAP = 1; // minimum distance between slider thumbs
 
-  const { selLeft, selRight } = useMemo(() => {
-    const isSingle = minVal === maxValSlider;
+  // range is the filter range
+  const [filterMinVal, filterMaxVal] = range;
 
-    if (isSingle) {
-      // center a small segment around that single value
-      const pos = ((minVal - minAllowed) / totalSteps) * 100; // 0..100
-      const singleWidth = 100 / (totalSteps * 2); // narrow pill (e.g. 12.5%)
-      const half = singleWidth / 2;
-
-      const left = Math.max(0, pos - half);
-      const right = Math.max(0, 100 - (pos + half));
-
-      return { selLeft: left, selRight: right };
+  // Map filter range -> slider range
+  function toSliderRange([min, max]: [number, number]): [number, number] {
+    // Single selected bin [k,k] -> show [k-1, k]
+    if (min === max) {
+      const val = min;
+      if (val > SLIDER_MIN) return [val - 1, val]; // e.g. [2,2] -> [1,2]
+      if (val < SLIDER_MAX) return [val, val + 1];
+      return [val - 1, val]; // fallback
     }
 
-    // normal range: from min thumb position to max thumb position
-    const left = ((minVal - minAllowed) / totalSteps) * 100;
-    const right = ((maxAllowed - maxValSlider) / totalSteps) * 100;
+    // Multi-bin range: filter [0,5] -> slider [0,5],
+    // filter [2,5] -> slider [1,5], filter [3,4] -> slider [2,4], etc.
+    if (min <= FILTER_MIN) {
+      return [SLIDER_MIN, max];
+    }
 
+    return [min - 1, max];
+  }
+
+  // Map slider range -> filter range
+  function fromSliderRange([s, t]: [number, number]): [number, number] {
+    // If slider has width 1, treat it as a single bin (take right edge)
+    if (t - s === 1) {
+      const val = t;
+      const clamped = Math.max(1, Math.min(FILTER_MAX, val));
+      return [clamped, clamped];
+    }
+
+    // Multi-bin range: bins included are (s, t] => min = s+1 (or 0 if s==0), max = t
+    let min: number;
+    if (s <= SLIDER_MIN) {
+      min = FILTER_MIN; // 0: "no lower bound"
+    } else {
+      min = s + 1;
+    }
+
+    let max = t;
+
+    min = Math.max(FILTER_MIN, Math.min(FILTER_MAX, min));
+    max = Math.max(FILTER_MIN, Math.min(FILTER_MAX, max));
+
+    if (max < min) max = min;
+
+    return [min, max];
+  }
+
+  // Slider view of the current filter range
+  const [sliderMinVal, sliderMaxVal] = useMemo(
+    () => toSliderRange(range),
+    [range]
+  );
+
+  // Slider fill band position (in %)
+  const { selLeft, selRight } = useMemo(() => {
+    const totalSteps = SLIDER_MAX - SLIDER_MIN; // 5
+    const left = ((sliderMinVal - SLIDER_MIN) / totalSteps) * 100;
+    const right = ((SLIDER_MAX - sliderMaxVal) / totalSteps) * 100;
     return { selLeft: left, selRight: right };
-  }, [minVal, maxValSlider, totalSteps]);
+  }, [sliderMinVal, sliderMaxVal]);
 
   const tickRatios = [0.1, 0.5, 1];
 
@@ -140,21 +185,21 @@ export function EmotionBars({
             const x = 64 + i * (128 + 10);
             const y = 170 - h;
             const bin = i + 1; // 1..5
-            const faded = bin < minVal || bin > maxValSlider;
+
+            // faded based on FILTER RANGE, not slider range
+            const faded = bin < filterMinVal || bin > filterMaxVal;
 
             return (
               <g
                 key={i}
                 opacity={faded ? 0.25 : 1}
                 className="transition-opacity duration-300 cursor-pointer"
-                // onClick={() => onRangeChange([bin, bin])}
+                // Hover sets a single-bin filter range like [bin, bin]
+                onMouseOver={() => onRangeChange([bin, bin])}
+                // Mouse-out resets to full visible range
+                onMouseOut={() => onRangeChange([FILTER_MIN, FILTER_MAX])}
                 role="button"
                 tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    onRangeChange([bin, bin]);
-                  }
-                }}
               >
                 <rect
                   x={x}
@@ -192,47 +237,63 @@ export function EmotionBars({
             Intensität der Emotion
           </text>
         </svg>
-      </div>
+        {/* ===== Inline range slider (directly under chart) ===== */}
+        <div className="mt-1 ml-6">
+          <div className="relative h-8 w-full">
+            <div className="absolute inset-y-3 w-full rounded-full bg-slate-800/70" />
+            <div
+              className="absolute inset-y-3 rounded-full bg-emo-grey"
+              style={{ left: `${selLeft}%`, right: `${selRight}%` }}
+            />
 
-      {/* ===== Inline range slider (directly under chart) ===== */}
-      {/* <div className="mt-1">
-        <div className="relative h-8 w-full">
-          <div className="absolute inset-y-3 w-full rounded-full bg-slate-800/70" />
+            {/* Min thumb */}
+            <input
+              aria-label="Minimale Intensität"
+              type="range"
+              min={SLIDER_MIN}
+              max={SLIDER_MAX}
+              step={STEP}
+              value={sliderMinVal}
+              onChange={(e) => {
+                const raw = Number(e.target.value);
+                // Enforce gap on slider: min <= max - MIN_GAP
+                const nextSliderMin = Math.min(raw, sliderMaxVal - MIN_GAP);
 
-          <div
-            className="absolute inset-y-3 rounded-full bg-emo-grey"
-            style={{ left: `${selLeft}%`, right: `${selRight}%` }}
-          />
+                const [nextFilterMin, nextFilterMax] = fromSliderRange([
+                  nextSliderMin,
+                  sliderMaxVal,
+                ]);
 
-          <input
-            aria-label="Minimale Intensität"
-            type="range"
-            min={minAllowed}
-            max={maxAllowed}
-            step={step}
-            value={minVal}
-            onChange={(e) => {
-              const nextMin = Math.min(Number(e.target.value), maxValSlider);
-              onRangeChange([nextMin, maxValSlider]);
-            }}
-            className="range-thumb absolute inset-0 w-full appearance-none bg-transparent"
-          />
+                onRangeChange([nextFilterMin, nextFilterMax]);
+              }}
+              className="range-thumb absolute inset-0 w-full appearance-none bg-transparent"
+            />
 
-          <input
-            aria-label="Maximale Intensität"
-            type="range"
-            min={minAllowed}
-            max={maxAllowed}
-            step={step}
-            value={maxValSlider}
-            onChange={(e) => {
-              const nextMax = Math.max(Number(e.target.value), minVal);
-              onRangeChange([minVal, nextMax]);
-            }}
-            className="range-thumb absolute inset-0 w-full appearance-none bg-transparent"
-          />
+            {/* Max thumb */}
+            <input
+              aria-label="Maximale Intensität"
+              type="range"
+              min={SLIDER_MIN}
+              max={SLIDER_MAX}
+              step={STEP}
+              value={sliderMaxVal}
+              onChange={(e) => {
+                const raw = Number(e.target.value);
+                // Enforce gap on slider: max >= min + MIN_GAP
+                const nextSliderMax = Math.max(raw, sliderMinVal + MIN_GAP);
+
+                const [nextFilterMin, nextFilterMax] = fromSliderRange([
+                  sliderMinVal,
+                  nextSliderMax,
+                ]);
+
+                onRangeChange([nextFilterMin, nextFilterMax]);
+              }}
+              className="range-thumb absolute inset-0 w-full appearance-none bg-transparent"
+            />
+          </div>
         </div>
-      </div> */}
+      </div>
     </div>
   );
 }
