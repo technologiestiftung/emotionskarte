@@ -269,10 +269,11 @@ export function EmotionBars({
         <div className="mt-0 ml-6 relative -top-[30px]">
           <div className="relative h-6 w-full">
             {/* track */}
-            <div className="absolute top-1/2 h-1.5 w-full -translate-y-1/4 transform rounded-full bg-emo-grey" />
+            <div className="absolute top-1/2 h-1 w-full -translate-y-1/2 transform rounded-full bg-emo-grey" />
+
             {/* selected range */}
             <div
-              className="absolute top-1/2 h-1.5 -translate-y-1/4 transform rounded-full bg-white"
+              className="absolute top-1/2 h-1 -translate-y-1/2 transform rounded-full bg-white"
               style={{ left: `${selLeft}%`, right: `${selRight}%` }}
             />
 
