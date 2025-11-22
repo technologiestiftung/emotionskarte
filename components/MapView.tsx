@@ -77,7 +77,6 @@ const CIRCLE_RADIUS_EXPRESSION = [
     "*",
     1.75 * INCREASER, // base radius at z9
     SIZE_BUCKET,
-    VISIBLE_FACTOR,
   ],
 
   // zoom 12
@@ -86,7 +85,6 @@ const CIRCLE_RADIUS_EXPRESSION = [
     "*",
     14 * INCREASER, // base radius at z12 (fits hex)
     SIZE_BUCKET,
-    VISIBLE_FACTOR,
   ],
 
   // zoom 15
@@ -95,16 +93,14 @@ const CIRCLE_RADIUS_EXPRESSION = [
     "*",
     112 * INCREASER, // base radius at z15
     SIZE_BUCKET,
-    VISIBLE_FACTOR,
   ],
 
-  // zoom 18 (NEW)
+  // zoom 18
   18,
   [
     "*",
     896 * INCREASER, // 14 * 2^(18-12) = 896
     SIZE_BUCKET,
-    VISIBLE_FACTOR,
   ],
 ];
 
@@ -126,6 +122,13 @@ function createColorExpression(
 const CIRCLE_OPACITY_EXPRESSION: maplibregl.ExpressionSpecification = [
   "coalesce",
   ["feature-state", "circleOpacity"],
+  0,
+];
+
+// NEW: same logic style for fills – drive fill-opacity from feature-state
+const FILL_OPACITY_EXPRESSION: maplibregl.ExpressionSpecification = [
+  "coalesce",
+  ["feature-state", "opacity"],
   0,
 ];
 
@@ -187,7 +190,11 @@ export default function MapView({
         { selected: false }
       );
       map.setFeatureState(
-        { source: H3_SOURCE_NAME, sourceLayer: H3_CENTROID_LAYER, id: prevId },
+        {
+          source: H3_SOURCE_NAME,
+          sourceLayer: H3_CENTROID_LAYER,
+          id: prevId,
+        },
         { selected: false }
       );
     } catch (error) {
@@ -285,9 +292,8 @@ export default function MapView({
           source: H3_SOURCE_NAME,
           "source-layer": H3_HEX_LAYER,
           paint: {
-            // use the current metric for the initial color expression
             "fill-color": createColorExpression(metricRef.current),
-            "fill-opacity": 0.6,
+            "fill-opacity": FILL_OPACITY_EXPRESSION,
           },
         });
       }
@@ -456,7 +462,11 @@ export default function MapView({
         { selected: true }
       );
       map.setFeatureState(
-        { source: H3_SOURCE_NAME, sourceLayer: H3_CENTROID_LAYER, id: hexId },
+        {
+          source: H3_SOURCE_NAME,
+          sourceLayer: H3_CENTROID_LAYER,
+          id: hexId,
+        },
         { selected: true }
       );
       selectedHexIdRef.current = hexId;
@@ -573,17 +583,17 @@ function updateFeatureStates(
       visible: info.visible,
       opacity: info.hasData
         ? info.passesFilter
-          ? 0.8
-          : 0.15
+          ? 0.6
+          : 0.1
         : info.visible
-        ? 0.1
+        ? 0
         : 0,
       circleOpacity: info.hasData
         ? info.passesFilter
-          ? 0.9
-          : 0.2
+          ? 0.6
+          : 0.1
         : info.visible
-        ? 0.05
+        ? 0
         : 0,
     };
 

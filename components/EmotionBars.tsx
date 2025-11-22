@@ -29,6 +29,9 @@ export function EmotionBars({
   const prevValuesRef = useRef(metricDistribution);
   const prevMaxRef = useRef(Math.max(...metricDistribution, 1));
 
+  // NEW: remember range from before hover
+  const hoverPrevRangeRef = useRef<[number, number] | null>(null);
+
   useEffect(() => {
     const fromVals = prevValuesRef.current;
     const toVals = metricDistribution;
@@ -140,6 +143,22 @@ export function EmotionBars({
 
   const tickRatios = [0.1, 0.5, 1];
 
+  // Helpers for hover behavior
+  const handleBarMouseEnter = (bin: number) => {
+    // Save previous range only on first hover
+    if (hoverPrevRangeRef.current === null) {
+      hoverPrevRangeRef.current = range;
+    }
+    onRangeChange([bin, bin]);
+  };
+
+  const handleBarMouseLeave = () => {
+    if (hoverPrevRangeRef.current !== null) {
+      onRangeChange(hoverPrevRangeRef.current);
+      hoverPrevRangeRef.current = null;
+    }
+  };
+
   return (
     <div className={clsx("w-full p-4", className)}>
       {/* ===== Chart ===== */}
@@ -204,8 +223,8 @@ export function EmotionBars({
                 key={i}
                 opacity={faded ? 0.25 : 1}
                 className="transition-opacity duration-300 cursor-pointer"
-                onMouseOver={() => onRangeChange([bin, bin])}
-                onMouseOut={() => onRangeChange([FILTER_MIN, FILTER_MAX])}
+                onMouseEnter={() => handleBarMouseEnter(bin)}
+                onMouseLeave={handleBarMouseLeave}
                 role="button"
                 tabIndex={0}
               >
@@ -250,10 +269,10 @@ export function EmotionBars({
         <div className="mt-0 ml-6 relative -top-[30px]">
           <div className="relative h-6 w-full">
             {/* track */}
-            <div className="absolute top-1/2 h-1.5 w-full -translate-y-1/4 transform rounded-full bg-slate-800/70" />
+            <div className="absolute top-1/2 h-1.5 w-full -translate-y-1/4 transform rounded-full bg-emo-grey" />
             {/* selected range */}
             <div
-              className="absolute top-1/2 h-1.5 -translate-y-1/4 transform rounded-full bg-emo-grey"
+              className="absolute top-1/2 h-1.5 -translate-y-1/4 transform rounded-full bg-white"
               style={{ left: `${selLeft}%`, right: `${selRight}%` }}
             />
 
